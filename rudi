@@ -13,13 +13,25 @@ xpadding=5
 ypadding=5
 
 ###################################################
-### TESTING MODULE, THIS IS WHERE THE BRAINS GO ###
+# Definitions
 ###################################################
-def printshit():
+def create():
     print("Title: " + titleEntry.get())
     print("Copyright: " + copyrightEntry.get())
     print("Font: " + fontEntry.get())
     print("Filename: " + filenameEntry.get())
+    scales()
+
+def scales():
+    if majorScaleVar.get() == 1:
+        print("you asked for major scales")
+    if minorScaleVar.get() == 1:
+        print("you asked for minor scales")
+    if modesScaleVar.get() == 1:
+        print("you asked for modes")
+
+
+
 
 ###################################################
 # Main Window
@@ -33,10 +45,10 @@ root.title("Rudi 2")
 style = ttk.Style()
 # tabs
 style.theme_create( "MyStyle", parent="alt", settings={
-                                        #    Left, Top, Right, Bottom
-        "TNotebook": {"configure": {"tabmargins": [7, 0, 0, 0] }},
-                                        #      Sides, Height
-        "TNotebook.Tab": {"configure": {"padding": [15, 3] }}})
+                                #    Left, Top, Right, Bottom
+    "TNotebook": {"configure": {"tabmargins": [7, 0, 0, 0] }},
+                                #      Sides, Height
+    "TNotebook.Tab": {"configure": {"padding": [15, 3] }}})
 style.theme_use("MyStyle")
 # button
 ttk.Style().configure("TButton", padding=6, background="#aaa")
@@ -82,7 +94,7 @@ tab_parent.pack(expand=1, fill='both')
 ###################################################
 # button
 ###################################################
-button_parent = ttk.Button(subframe, text='Create', command=printshit)
+button_parent = ttk.Button(subframe, text='Create', command=create)
 button_parent.grid(column=2, row=0)
 # output filename
 filenameLabel = Label(subframe, text="Filename:")
@@ -110,14 +122,25 @@ majorScaleVar = IntVar()
 majorScaleCheckBox = Checkbutton(scalestab, text = "Major Scales", variable = majorScaleVar, onvalue = 1, offvalue = 0, height=1)
 majorScaleCheckBox.grid(row=0, column=0, sticky=W)
 
+minorScaleVar = IntVar()
+minorScaleCheckBox = Checkbutton(scalestab, text = "Minor Scales", variable = minorScaleVar, onvalue = 1, offvalue = 0, height=1)
+minorScaleCheckBox.grid(row=1, column=0, sticky=W)
+
+modesScaleVar = IntVar()
+modesScaleCheckBox = Checkbutton(scalestab, text = "Modes", variable = modesScaleVar, onvalue = 1, offvalue = 0, height=1)
+modesScaleCheckBox.grid(row=2, column=0, sticky=W)
+
 ###################################################
 # Settings tab widgets
 ###################################################
 fontLabel = Label(settingstab, text="Font:")
 fontLabel.grid(row=0, column=0, padx=xpadding, pady=ypadding)
-
 fontEntry = Entry(settingstab, width=50)
 fontEntry.grid(row=0, column=1, padx=xpadding, pady=ypadding)
+
+deletefilesVar = IntVar()
+deletefilesCheckBox = Checkbutton(settingstab, text = "Delete intermediate files", variable = deletefilesVar, onvalue = 1, offvalue = 0, height=1)
+deletefilesCheckBox.grid(row=1, column=0, sticky=W)
 
 ###################################################
 # this starts the main program
