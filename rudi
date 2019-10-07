@@ -3,25 +3,41 @@
 ###################################################
 # Imports
 ###################################################
-from tkinter import *
-from tkinter import ttk
+from tkinter import * # GUI
+from tkinter import ttk # GUI
+from tkinter import filedialog # for save folder
+import time # for default filenames with date
+from os import path
 
 ###################################################
 # Initial Variables
 ###################################################
 xpadding=5
 ypadding=5
+defaultfolder = path.expanduser('~')
 
+###################################################
 ###################################################
 # Definitions
 ###################################################
-def create():
-    print("Title: " + titleEntry.get())
-    print("Copyright: " + copyrightEntry.get())
-    print("Font: " + fontEntry.get())
-    print("Filename: " + filenameEntry.get())
-    scales()
 
+# main program
+def create():
+    startfile()
+    # scales()
+    # endfile()
+
+def startfile():
+    if filenameEntry.get():
+        fillinsheet = defaultfolder + filenameEntry.get() + '.ly'
+        keysheet = defaultfolder + filenameEntry.get() + '-key.ly'
+    else:
+        fillinsheet = defaultfolder + 'theory-sheet-' + time.strftime("%Y-%m-%d")  + '.ly'
+        keysheet = defaultfolder + 'theory-sheet-key-' + time.strftime("%Y-%m-%d")  + '.ly'
+    print(fillinsheet)
+    print(keysheet)
+
+# scales
 def scales():
     if majorScaleVar.get() == 1:
         print("you asked for major scales")
@@ -30,8 +46,14 @@ def scales():
     if modesScaleVar.get() == 1:
         print("you asked for modes")
 
+# settings
+def selectsavefolder():
+    global defaultfolder
+    defaultfolder = filedialog.askdirectory()
+    defaultworkingfolderButton.config(text=defaultfolder)
 
-
+###################################################
+###################################################
 
 ###################################################
 # Main Window
@@ -141,6 +163,12 @@ fontEntry.grid(row=0, column=1, padx=xpadding, pady=ypadding)
 deletefilesVar = IntVar()
 deletefilesCheckBox = Checkbutton(settingstab, text = "Delete intermediate files", variable = deletefilesVar, onvalue = 1, offvalue = 0, height=1)
 deletefilesCheckBox.grid(row=1, column=0, sticky=W)
+
+defaultworkingfolderLabel = Label(settingstab, text="Default Save Folder:")
+defaultworkingfolderLabel.grid(row=2, column=0, padx=xpadding, pady=ypadding)
+defaultworkingfolderButton = ttk.Button(settingstab, text='Default Save Folder', command=selectsavefolder)
+defaultworkingfolderButton.grid(row=2, column=1, padx=xpadding, pady=ypadding)
+
 
 ###################################################
 # this starts the main program
