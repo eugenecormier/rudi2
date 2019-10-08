@@ -29,11 +29,11 @@ def create():
 
 def startfile():
     if filenameEntry.get():
-        fillinsheet = defaultfolder + filenameEntry.get() + '.ly'
-        keysheet = defaultfolder + filenameEntry.get() + '-key.ly'
+        fillinsheet = path.join(defaultfolder, filenameEntry.get() + '.ly')
+        keysheet = path.join(defaultfolder, filenameEntry.get() + '-key.ly')
     else:
-        fillinsheet = defaultfolder + 'theory-sheet-' + time.strftime("%Y-%m-%d")  + '.ly'
-        keysheet = defaultfolder + 'theory-sheet-key-' + time.strftime("%Y-%m-%d")  + '.ly'
+        fillinsheet = path.join(defaultfolder, 'theory-sheet-' + time.strftime("%Y-%m-%d")  + '.ly')
+        keysheet = path.join(defaultfolder, 'theory-sheet-key-' + time.strftime("%Y-%m-%d")  + '.ly')
     print(fillinsheet)
     print(keysheet)
 
