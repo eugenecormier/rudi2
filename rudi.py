@@ -54,7 +54,6 @@ def savesettings():
 
 # main program
 def create():
-    print(defaultfolder)
     start_ly_file()
     # scales()
     # endfile()
@@ -81,7 +80,6 @@ def scales():
 # settings
 def selectsavefolder():
     global defaultfolder
-    print(defaultfolder)
     defaultfolder = filedialog.askdirectory(initialdir=defaultfolder)
     defaultworkingfolderButton.config(text=defaultfolder)
 
