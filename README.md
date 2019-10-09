@@ -12,6 +12,6 @@ https://www.python.org/downloads/windows/
 MacOSX: you will need to install python 3
 https://www.python.org/downloads/mac-osx/
 
-Ubuntu Linux: you will have to install the tkinter python libraries (python3-tk).
+Ubuntu Linux: you will have to install the tkinter python libraries (sudo apt install python3-tk).
 
 ### PLEASE NOTE, THIS PROGRAM IS CURRENTLY IN ALPHA STAGES AND DOES NOT RUN OR DO ANYTHING USEFUL... FOR NOW....
