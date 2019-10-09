@@ -4,8 +4,13 @@ rudi2 is a music rudiments student worksheet and answer key generator using pyth
 #Installation Notes
 
 All Computers: You will need to have lilypond 2.18 installed
+http://lilypond.org/download.html
 
-Specifics:
+Windows: you will need to install python 3
+https://www.python.org/downloads/windows/
+
+MacOSX: you will need to install python 3
+https://www.python.org/downloads/mac-osx/
 
 Ubuntu Linux: you will have to install the tkinter python libraries (python3-tk).
 
