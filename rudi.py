@@ -9,13 +9,15 @@ from tkinter import filedialog # for save folder
 import time # for default filenames with date
 from os import path # for working cross platform with files/folders
 import configparser # for working with settings files (.ini)
-from rudidata import *
+from rudidata import * # import musical variables from data file
 
 ###################################################
 # Initial Variables
 ###################################################
 xpadding=5
 ypadding=5
+font = ''
+boldfont = '\\bold'
 defaultfolder = path.expanduser('~')
 
 ###################################################
@@ -34,7 +36,8 @@ def initconfigfile():
         # config parser stuff
         config = configparser.ConfigParser()
         config['SETTINGS'] = {'DefaultSaveFolder': defaultfolder,
-                              'DeleteTempFiles': 0 }
+                              'DeleteTempFiles': 0 ,
+                              'DefaultFont': '' }
         config.write(configfile)
         # close file
         configfile.close()
@@ -45,6 +48,7 @@ def initconfigfile():
         config.read(path.join(path.dirname(path.realpath(__file__)), 'config.ini'))
         defaultfolder = config['SETTINGS']['defaultsavefolder']
         deletefilesVar.set(config['SETTINGS']['deletetempfiles'])
+        fontEntry.insert(END, config['SETTINGS']['defaultfont'])
         # update button text
         defaultworkingfolderButton.config(text=defaultfolder)
 
@@ -52,16 +56,23 @@ def savesettings():
     configfile = open(path.join(path.dirname(path.realpath(__file__)), 'config.ini'),"w")
     config = configparser.ConfigParser()
     config['SETTINGS'] = {'DefaultSaveFolder': defaultfolder,
-                          'DeleteTempFiles': deletefilesVar.get() }
+                          'DeleteTempFiles': deletefilesVar.get(),
+                          'DefaultFont': fontEntry.get() }
     config.write(configfile)
     configfile.close()
 
 # main program
 def create():
-    print(var1)
+    initcustomfonts()
     start_ly_file()
     # scales()
     # endfile()
+
+def initcustomfonts():
+    global font,boldfont
+    if fontEntry.get() != '':
+        font = fontEntry.get()
+        boldfont = '\\bold ' + fontEntry.get()
 
 def start_ly_file():
     if filenameEntry.get():
