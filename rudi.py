@@ -71,8 +71,8 @@ def create():
 def initcustomfonts():
     global font,boldfont
     if fontEntry.get() != '':
-        font = fontEntry.get()
-        boldfont = '\\bold ' + fontEntry.get()
+        font = '\override #\'(font-name . "' + fontEntry.get() + '") '
+        boldfont = '\override #\'(font-name . "' + fontEntry.get() + ' Bold") '
 
 def start_ly_file():
     if filenameEntry.get():
@@ -81,8 +81,8 @@ def start_ly_file():
     else:
         fillinsheet = path.join(defaultfolder, 'theory-sheet-' + time.strftime("%Y-%m-%d")  + '.ly')
         keysheet = path.join(defaultfolder, 'theory-sheet-key-' + time.strftime("%Y-%m-%d")  + '.ly')
-    print(fillinsheet)
-    print(keysheet)
+    #print(fillinsheet)
+    #print(keysheet)
 
 # scales
 def scales():
