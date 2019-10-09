@@ -9,6 +9,7 @@ from tkinter import filedialog # for save folder
 import time # for default filenames with date
 from os import path # for working cross platform with files/folders
 import configparser # for working with settings files (.ini)
+from rudidata import *
 
 ###################################################
 # Initial Variables
@@ -57,6 +58,7 @@ def savesettings():
 
 # main program
 def create():
+    print(var1)
     start_ly_file()
     # scales()
     # endfile()
