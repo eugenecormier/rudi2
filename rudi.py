@@ -32,7 +32,8 @@ def initconfigfile():
         configfile = open(path.join(path.dirname(path.realpath(__file__)), 'config.ini'),"w+")
         # config parser stuff
         config = configparser.ConfigParser()
-        config['SETTINGS'] = {'DefaultSaveFolder': defaultfolder}
+        config['SETTINGS'] = {'DefaultSaveFolder': defaultfolder,
+                              'DeleteTempFiles': 0 }
         config.write(configfile)
         # close file
         configfile.close()
@@ -42,13 +43,15 @@ def initconfigfile():
         config = configparser.ConfigParser()
         config.read(path.join(path.dirname(path.realpath(__file__)), 'config.ini'))
         defaultfolder = config['SETTINGS']['defaultsavefolder']
+        deletefilesVar.set(config['SETTINGS']['deletetempfiles'])
         # update button text
         defaultworkingfolderButton.config(text=defaultfolder)
 
 def savesettings():
     configfile = open(path.join(path.dirname(path.realpath(__file__)), 'config.ini'),"w")
     config = configparser.ConfigParser()
-    config['SETTINGS'] = {'DefaultSaveFolder': defaultfolder}
+    config['SETTINGS'] = {'DefaultSaveFolder': defaultfolder,
+                          'DeleteTempFiles': deletefilesVar.get() }
     config.write(configfile)
     configfile.close()
 
