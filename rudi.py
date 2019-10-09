@@ -20,6 +20,7 @@ font = ''
 boldfont = '\\bold'
 defaultfolder = path.expanduser('~')
 
+
 ###################################################
 ###################################################
 # Definitions
@@ -64,9 +65,9 @@ def savesettings():
 # main program
 def create():
     initcustomfonts()
-    start_ly_file()
+    worksheetfile,keysheetfile = start_ly_file()
     # scales()
-    # endfile()
+    endfile(worksheetfile,keysheetfile)
 
 def initcustomfonts():
     global font,boldfont
@@ -75,14 +76,24 @@ def initcustomfonts():
         boldfont = '\override #\'(font-name . "' + fontEntry.get() + ' Bold") '
 
 def start_ly_file():
+    # setup filenames
     if filenameEntry.get():
-        fillinsheet = path.join(defaultfolder, filenameEntry.get() + '.ly')
-        keysheet = path.join(defaultfolder, filenameEntry.get() + '-key.ly')
+        worksheetfilename = path.join(defaultfolder, filenameEntry.get() + '.ly')
+        keysheetfilename = path.join(defaultfolder, filenameEntry.get() + '-key.ly')
     else:
-        fillinsheet = path.join(defaultfolder, 'theory-sheet-' + time.strftime("%Y-%m-%d")  + '.ly')
-        keysheet = path.join(defaultfolder, 'theory-sheet-key-' + time.strftime("%Y-%m-%d")  + '.ly')
-    #print(fillinsheet)
-    #print(keysheet)
+        worksheetfilename = path.join(defaultfolder, 'theory-sheet-' + time.strftime("%Y-%m-%d")  + '.ly')
+        keysheetfilename = path.join(defaultfolder, 'theory-sheet-key-' + time.strftime("%Y-%m-%d")  + '.ly')
+    # open files for writing
+    worksheetfile = open(worksheetfilename, 'w')
+    keysheetfile = open(keysheetfilename, 'w')
+    # write lilypond headers
+    worksheetfile.writelines(worksheetheader + font)
+    keysheetfile.writelines(worksheetheader + boldfont)
+    # if there's a custom title, add that to the sheets
+    if titleEntry.get() != '':
+        worksheetfile.writelines(titleEntry.get())
+        keysheetfile.writelines(titleEntry.get())
+    return worksheetfile,keysheetfile
 
 # scales
 def scales():
@@ -92,6 +103,12 @@ def scales():
         print("you asked for minor scales")
     if modesScaleVar.get() == 1:
         print("you asked for modes")
+
+def endfile(worksheetfile,keysheetfile):
+    worksheetfile.close()
+    keysheetfile.close()
+
+
 
 # settings
 def selectsavefolder():
