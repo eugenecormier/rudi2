@@ -178,8 +178,8 @@ root.rowconfigure(0, weight=1)
 ###################################################
 # Tabs
 ###################################################
-tab_parent = ttk.Notebook(mainframe)
-tab_parent.grid(column=1, row=1, sticky=(W, E))
+tab_parent = ttk.Notebook(mainframe, padding="2 5 2 5")
+tab_parent.grid(row=0, column=0, sticky=(N, W, E))
 # these are the tabs
 welcometab = ttk.Frame(tab_parent)
 basicstab = ttk.Frame(tab_parent)
@@ -188,6 +188,7 @@ intervalstab = ttk.Frame(tab_parent)
 chordstab = ttk.Frame(tab_parent)
 cadencestab = ttk.Frame(tab_parent)
 settingstab = ttk.Frame(tab_parent)
+settingstab.grid(column=0, row=0, sticky=(W, E))
 # add the previous tabs to the window with titles
 tab_parent.add(welcometab, text="Start")
 tab_parent.add(basicstab, text="Basics")
@@ -241,23 +242,65 @@ modesScaleCheckBox.grid(row=2, column=0, sticky=W)
 ###################################################
 # Settings tab widgets
 ###################################################
-fontLabel = Label(settingstab, text="Font:")
-fontLabel.grid(row=0, column=0, padx=xpadding, pady=ypadding)
-fontEntry = Entry(settingstab, width=50)
-fontEntry.grid(row=0, column=1, padx=xpadding, pady=ypadding)
+# document settings frame
+docframe = ttk.LabelFrame(settingstab, text='Document Settings', relief=GROOVE, borderwidth=2)
+docframe.grid(row=0, column=0, sticky=(N, W, S, E), padx=xpadding, pady=ypadding)
+rowvar = 0
 
+# font
+fontLabel = Label(docframe, text="Font:")
+fontLabel.grid(row=rowvar, column=0, sticky=(W) ,padx=xpadding, pady=ypadding)
+fontEntry = Entry(docframe, width=50)
+fontEntry.grid(row=rowvar, column=1, sticky=(W), padx=xpadding, pady=ypadding)
+rowvar = rowvar + 1
+
+# right justify
+rightjustVar = IntVar()
+rightjustCheckBox = Checkbutton(docframe, text = "Right Justify", variable = rightjustVar, onvalue = 1, offvalue = 0, height=1)
+rightjustCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+# ragged bottom
+raggedbottomVar = IntVar()
+raggedbottomCheckBox = Checkbutton(docframe, text = "Ragged Bottom", variable = raggedbottomVar, onvalue = 1, offvalue = 0, height=1)
+raggedbottomCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+# ragged last bottom
+raggedlastbottomVar = IntVar()
+raggedlastbottomCheckBox = Checkbutton(docframe, text = "Ragged Last Bottom", variable = raggedlastbottomVar, onvalue = 1, offvalue = 0, height=1)
+raggedlastbottomCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+# paper size
+raggedlastbottomVar = IntVar()
+raggedlastbottomCheckBox = Checkbutton(docframe, text = "Ragged Last Bottom", variable = raggedlastbottomVar, onvalue = 1, offvalue = 0, height=1)
+raggedlastbottomCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+# program settings frame
+progframe = ttk.LabelFrame(settingstab, text='Program Settings', relief=GROOVE, borderwidth=2)
+progframe.grid(row=1, column=0, sticky=(W, E, N), padx=xpadding, pady=ypadding)
+rowvar = 0
+
+# delete temp files
 deletefilesVar = IntVar()
-deletefilesCheckBox = Checkbutton(settingstab, text = "Delete intermediate files", variable = deletefilesVar, onvalue = 1, offvalue = 0, height=1)
-deletefilesCheckBox.grid(row=1, column=0, sticky=W)
+deletefilesCheckBox = Checkbutton(progframe, text = "Delete intermediate files", variable = deletefilesVar, onvalue = 1, offvalue = 0, height=1)
+deletefilesCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
 
-defaultworkingfolderLabel = Label(settingstab, text="Default Save Folder:")
-defaultworkingfolderLabel.grid(row=2, column=0, padx=xpadding, pady=ypadding)
-defaultworkingfolderButton = ttk.Button(settingstab, text=defaultfolder, command=selectsavefolder)
-defaultworkingfolderButton.grid(row=2, column=1, padx=xpadding, pady=ypadding)
+# default output folder
+defaultworkingfolderLabel = Label(progframe, text="Default Save Folder:")
+defaultworkingfolderLabel.grid(row=rowvar, column=0, sticky=(W) ,padx=xpadding, pady=ypadding)
+defaultworkingfolderButton = ttk.Button(progframe, text=defaultfolder, command=selectsavefolder)
+defaultworkingfolderButton.grid(row=rowvar, column=1, sticky=(W) ,padx=xpadding, pady=ypadding)
+rowvar = rowvar + 1
 
+# save button
 # this must be the last entry
 savebuttonButton = ttk.Button(settingstab, text='Save Settings', command=savesettings)
-savebuttonButton.grid(row=3, column=0, padx=xpadding, pady=ypadding)
+# not sure about the South sticky, but it looks ok for now
+savebuttonButton.grid(row=rowvar, columnspan=2, sticky=(S) ,padx=xpadding, pady=ypadding)
 
 ###################################################
 # this starts the main program
