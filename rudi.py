@@ -19,7 +19,6 @@ xpadding=5
 ypadding=5
 defaultfolder = path.expanduser('~')
 
-
 ###################################################
 ###################################################
 # Definitions
@@ -61,7 +60,6 @@ def initconfigfile():
         paperorientationVar.set(config['SETTINGS']['paperorientation'])
         # update button text
         defaultworkingfolderButton.config(text=defaultfolder)
-
 
 def savesettings():
     configfile = open(path.join(path.dirname(path.realpath(__file__)), 'config.ini'),"w")
@@ -113,10 +111,10 @@ def start_ly_file(docfont,docboldfont):
         doctag = copyrightEntry.get()
     else:
         doctag = 'Created by rudi v2.0'
+
+    # TODO Section
     # right justify section
     #if rightjustVar.get() ='':
-
-
 
     # write the header to file
     worksheetfile.writelines(headers.lilypondheader.format(title=doctitle,font=docfont,boldfont=docboldfont,tag=doctag,keytitle=''))
@@ -136,8 +134,6 @@ def scales():
 def endfile(worksheetfile,keysheetfile):
     worksheetfile.close()
     keysheetfile.close()
-
-
 
 # settings
 def selectsavefolder():
@@ -294,11 +290,6 @@ paperorientationVar.set('Portrait')
 paperorientationMenu = OptionMenu(docframe, paperorientationVar, *{'Portrait', 'Landscape'})
 paperorientationMenu.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
-
-
-
-
-
 
 # right justify
 rightjustVar = IntVar(value=1)
