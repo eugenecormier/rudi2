@@ -3,15 +3,15 @@
 ###################################################
 # Imports
 ###################################################
-from tkinter import * # main gui library
-from tkinter import ttk # extended gui widgets
-from tkinter import filedialog # for save folder
-import time # for default filenames with date
-from os import path # for working cross platform with files/folders
-import configparser # for working with settings files (.ini)
-
-
-from rudidata import * # import musical variables from data file
+from tkinter import *  # main gui library
+from tkinter import ttk  # extended gui widgets
+from tkinter import filedialog  # for save folder
+import time  # for default filenames with date
+from os import path  # for working cross platform with files/folders
+import configparser  # for working with settings files (.ini)
+# my data files
+import worksheet_data
+import keysheet_data
 
 ###################################################
 # Initial Variables
@@ -80,21 +80,28 @@ def initcustomfonts():
 def start_ly_file():
     # setup filenames
     if filenameEntry.get():
-        worksheetfilename = path.join(defaultfolder, filenameEntry.get() + '.ly')
-        keysheetfilename = path.join(defaultfolder, filenameEntry.get() + '-key.ly')
+        worksheetfilename = path.join(defaultfolder, filenameEntry.get() + '-worksheet.ly')
+        keysheetfilename = path.join(defaultfolder, filenameEntry.get() + '-keysheet.ly')
     else:
-        worksheetfilename = path.join(defaultfolder, 'theory-sheet-' + time.strftime("%Y-%m-%d")  + '.ly')
-        keysheetfilename = path.join(defaultfolder, 'theory-sheet-key-' + time.strftime("%Y-%m-%d")  + '.ly')
+        worksheetfilename = path.join(defaultfolder, 'theory-worksheet-' + time.strftime("%Y-%m-%d")  + '.ly')
+        keysheetfilename = path.join(defaultfolder, 'theory-keysheet-' + time.strftime("%Y-%m-%d")  + '.ly')
     # open files for writing
     worksheetfile = open(worksheetfilename, 'w')
     keysheetfile = open(keysheetfilename, 'w')
     # write lilypond headers
-    worksheetfile.writelines(worksheetheader + font)
-    keysheetfile.writelines(worksheetheader + boldfont)
-    # if there's a custom title, add that to the sheets
+    worksheetfile.writelines(worksheet_data.worksheetheader1)
+    keysheetfile.writelines(keysheet_data.keysheetheader1)
+    # add titles to the sheets
     if titleEntry.get() != '':
         worksheetfile.writelines(titleEntry.get())
         keysheetfile.writelines(titleEntry.get())
+    else:
+        worksheetfile.writelines('Preliminary Rudiments Worksheet')
+        keysheetfile.writelines('Preliminary Rudiments Worksheet')
+    # next round of headers
+    test = 'test'
+    worksheetfile.writelines(worksheet_data.worksheetheader2)
+    keysheetfile.writelines(keysheet_data.keysheetheader2)
     return worksheetfile,keysheetfile
 
 # scales
