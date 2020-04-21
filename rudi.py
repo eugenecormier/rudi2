@@ -300,7 +300,7 @@ rowvar = rowvar + 1
 # this must be the last entry
 savebuttonButton = ttk.Button(settingstab, text='Save Settings', command=savesettings)
 # not sure about the South sticky, but it looks ok for now
-savebuttonButton.grid(row=rowvar, columnspan=2, sticky=(S) ,padx=xpadding, pady=ypadding)
+savebuttonButton.grid(row=2, column=0, sticky=(S) ,padx=xpadding, pady=ypadding)
 
 ###################################################
 # this starts the main program
