@@ -10,16 +10,13 @@ import time  # for default filenames with date
 from os import path  # for working cross platform with files/folders
 import configparser  # for working with settings files (.ini)
 # my data files
-import worksheet_data
-import keysheet_data
+import headers
 
 ###################################################
 # Initial Variables
 ###################################################
 xpadding=5
 ypadding=5
-font = ''
-boldfont = '\\bold'
 defaultfolder = path.expanduser('~')
 
 
@@ -64,20 +61,21 @@ def savesettings():
     config.write(configfile)
     configfile.close()
 
-# main program
+# main program ########################################
 def create():
-    initcustomfonts()
-    worksheetfile,keysheetfile = start_ly_file()
+    docfont,docboldfont = initcustomfonts()
+    worksheetfile,keysheetfile = start_ly_file(docfont,docboldfont)
     # scales()
     endfile(worksheetfile,keysheetfile)
+#######################################################
 
 def initcustomfonts():
-    global font,boldfont
     if fontEntry.get() != '':
-        font = '\override #\'(font-name . "' + fontEntry.get() + '") '
-        boldfont = '\override #\'(font-name . "' + fontEntry.get() + ' Bold") '
+        return '\override #\'(font-name . "' + fontEntry.get() + '") ','\override #\'(font-name . "' + fontEntry.get() + ' Bold") '
+    else:
+        return '','\\bold'
 
-def start_ly_file():
+def start_ly_file(docfont,docboldfont):
     # setup filenames
     if filenameEntry.get():
         worksheetfilename = path.join(defaultfolder, filenameEntry.get() + '-worksheet.ly')
@@ -88,20 +86,21 @@ def start_ly_file():
     # open files for writing
     worksheetfile = open(worksheetfilename, 'w')
     keysheetfile = open(keysheetfilename, 'w')
-    # write lilypond headers
-    worksheetfile.writelines(worksheet_data.worksheetheader1)
-    keysheetfile.writelines(keysheet_data.keysheetheader1)
-    # add titles to the sheets
+    # set up header variables
+    # titles
     if titleEntry.get() != '':
-        worksheetfile.writelines(titleEntry.get())
-        keysheetfile.writelines(titleEntry.get())
+        doctitle = titleEntry.get()
     else:
-        worksheetfile.writelines('Preliminary Rudiments Worksheet')
-        keysheetfile.writelines('Preliminary Rudiments Worksheet')
-    # next round of headers
-    test = 'test'
-    worksheetfile.writelines(worksheet_data.worksheetheader2)
-    keysheetfile.writelines(keysheet_data.keysheetheader2)
+        doctitle = 'Preliminary Rudiments Worksheet'
+    # copyright
+    if copyrightEntry.get() !='':
+        doctag = copyrightEntry.get()
+    else:
+        doctag = 'Created by rudi v2.0'
+    # write the header to file
+    worksheetfile.writelines(headers.worksheetheader.format(title=doctitle,font=docfont,boldfont=docboldfont,tag=doctag))
+    keysheetfile.writelines(headers.keysheetheader.format(title=doctitle,font=docfont,boldfont=docboldfont,tag=doctag))
+    # return the sheet filenames for subsequent writes
     return worksheetfile,keysheetfile
 
 # scales
