@@ -37,7 +37,7 @@ def initconfigfile():
         config = configparser.ConfigParser()
         config['SETTINGS'] = {'DefaultSaveFolder': defaultfolder,
                               'DeleteTempFiles': 0,
-                              'DefaultFont': '',
+                              'DefaultFont': 'Sans',
                               'RightJustify': 1,
                               'BottomJustify': 1,
                               'LastBottomJustify': 1,
@@ -53,7 +53,7 @@ def initconfigfile():
         config.read(path.join(path.dirname(path.realpath(__file__)), 'config.ini'))
         defaultfolder = config['SETTINGS']['defaultsavefolder']
         deletefilesVar.set(config['SETTINGS']['deletetempfiles'])
-        fontEntry.insert(END, config['SETTINGS']['defaultfont'])
+        fontVar.set(config['SETTINGS']['defaultfont'])
         rightjustVar.set(config['SETTINGS']['rightjustify'])
         bottomjustifyVar.set(config['SETTINGS']['bottomjustify'])
         lastbottomjustifyVar.set(config['SETTINGS']['lastbottomjustify'])
@@ -68,7 +68,7 @@ def savesettings():
     config = configparser.ConfigParser()
     config['SETTINGS'] = {'DefaultSaveFolder': defaultfolder,
                           'DeleteTempFiles': deletefilesVar.get(),
-                          'DefaultFont': fontEntry.get(),
+                          'DefaultFont': fontVar.get(),
                           'RightJustify': rightjustVar.get(),
                           'BottomJustify': bottomjustifyVar.get(),
                           'LastBottomJustify': lastbottomjustifyVar.get(),
@@ -271,14 +271,16 @@ rowvar = 0
 # font
 fontLabel = Label(docframe, text="Font:")
 fontLabel.grid(row=rowvar, column=0, sticky=(W) ,padx=xpadding, pady=ypadding)
-fontEntry = Entry(docframe, width=50)
+fontVar = StringVar()
+fontVar.set('Sans')
+fontEntry = Entry(docframe, textvariable=fontVar, width=50)
 fontEntry.grid(row=rowvar, column=1, sticky=(W), padx=xpadding, pady=ypadding)
 rowvar = rowvar + 1
 
 # paper size
 papersizeLabel = Label(docframe, text="Page Size:")
 papersizeLabel.grid(row=rowvar, column=0, sticky=(W) ,padx=xpadding, pady=ypadding)
-papersizeVar = StringVar(root)
+papersizeVar = StringVar()
 papersizeVar.set('Letter')
 papersizeMenu = OptionMenu(docframe, papersizeVar, *{'Letter', 'Legal', 'A4'})
 papersizeMenu.grid(row=rowvar, column=1, sticky=W)
@@ -287,7 +289,7 @@ rowvar = rowvar + 1
 # paper orientation
 paperorientationLabel = Label(docframe, text="Orientation:")
 paperorientationLabel.grid(row=rowvar, column=0, sticky=(W) ,padx=xpadding, pady=ypadding)
-paperorientationVar = StringVar(root)
+paperorientationVar = StringVar()
 paperorientationVar.set('Portrait')
 paperorientationMenu = OptionMenu(docframe, paperorientationVar, *{'Portrait', 'Landscape'})
 paperorientationMenu.grid(row=rowvar, column=1, sticky=W)
