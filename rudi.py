@@ -36,8 +36,13 @@ def initconfigfile():
         # config parser stuff
         config = configparser.ConfigParser()
         config['SETTINGS'] = {'DefaultSaveFolder': defaultfolder,
-                              'DeleteTempFiles': 0 ,
-                              'DefaultFont': '' }
+                              'DeleteTempFiles': 0,
+                              'DefaultFont': '',
+                              'RightJustify': 1,
+                              'BottomJustify': 1,
+                              'LastBottomJustify': 1,
+                              'PaperSize': 'Letter',
+                              'PaperOrientation': 'Portrait'}
         config.write(configfile)
         # close file
         configfile.close()
@@ -49,15 +54,26 @@ def initconfigfile():
         defaultfolder = config['SETTINGS']['defaultsavefolder']
         deletefilesVar.set(config['SETTINGS']['deletetempfiles'])
         fontEntry.insert(END, config['SETTINGS']['defaultfont'])
+        rightjustVar.set(config['SETTINGS']['rightjustify'])
+        bottomjustifyVar.set(config['SETTINGS']['bottomjustify'])
+        lastbottomjustifyVar.set(config['SETTINGS']['lastbottomjustify'])
+        papersizeVar.set(config['SETTINGS']['papersize'])
+        paperorientationVar.set(config['SETTINGS']['paperorientation'])
         # update button text
         defaultworkingfolderButton.config(text=defaultfolder)
+
 
 def savesettings():
     configfile = open(path.join(path.dirname(path.realpath(__file__)), 'config.ini'),"w")
     config = configparser.ConfigParser()
     config['SETTINGS'] = {'DefaultSaveFolder': defaultfolder,
                           'DeleteTempFiles': deletefilesVar.get(),
-                          'DefaultFont': fontEntry.get() }
+                          'DefaultFont': fontEntry.get(),
+                          'RightJustify': rightjustVar.get(),
+                          'BottomJustify': bottomjustifyVar.get(),
+                          'LastBottomJustify': lastbottomjustifyVar.get(),
+                          'PaperSize': papersizeVar.get(),
+                          'PaperOrientation': paperorientationVar.get()}
     config.write(configfile)
     configfile.close()
 
@@ -97,9 +113,14 @@ def start_ly_file(docfont,docboldfont):
         doctag = copyrightEntry.get()
     else:
         doctag = 'Created by rudi v2.0'
+    # right justify section
+    #if rightjustVar.get() ='':
+
+
+
     # write the header to file
-    worksheetfile.writelines(headers.worksheetheader.format(title=doctitle,font=docfont,boldfont=docboldfont,tag=doctag))
-    keysheetfile.writelines(headers.keysheetheader.format(title=doctitle,font=docfont,boldfont=docboldfont,tag=doctag))
+    worksheetfile.writelines(headers.lilypondheader.format(title=doctitle,font=docfont,boldfont=docboldfont,tag=doctag,keytitle=''))
+    keysheetfile.writelines(headers.lilypondheader.format(title=doctitle,font=docfont,boldfont=docboldfont,tag=doctag,keytitle='\with-color #red Key'))
     # return the sheet filenames for subsequent writes
     return worksheetfile,keysheetfile
 
@@ -254,28 +275,45 @@ fontEntry = Entry(docframe, width=50)
 fontEntry.grid(row=rowvar, column=1, sticky=(W), padx=xpadding, pady=ypadding)
 rowvar = rowvar + 1
 
+# paper size
+papersizeLabel = Label(docframe, text="Page Size:")
+papersizeLabel.grid(row=rowvar, column=0, sticky=(W) ,padx=xpadding, pady=ypadding)
+papersizeVar = StringVar(root)
+papersizeVar.set('Letter')
+papersizeMenu = OptionMenu(docframe, papersizeVar, *{'Letter', 'Legal', 'A4'})
+papersizeMenu.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+# paper orientation
+paperorientationLabel = Label(docframe, text="Orientation:")
+paperorientationLabel.grid(row=rowvar, column=0, sticky=(W) ,padx=xpadding, pady=ypadding)
+paperorientationVar = StringVar(root)
+paperorientationVar.set('Portrait')
+paperorientationMenu = OptionMenu(docframe, paperorientationVar, *{'Portrait', 'Landscape'})
+paperorientationMenu.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+
+
+
+
+
 # right justify
-rightjustVar = IntVar()
+rightjustVar = IntVar(value=1)
 rightjustCheckBox = Checkbutton(docframe, text = "Right Justify", variable = rightjustVar, onvalue = 1, offvalue = 0, height=1)
 rightjustCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
-# ragged bottom
-raggedbottomVar = IntVar()
-raggedbottomCheckBox = Checkbutton(docframe, text = "Ragged Bottom", variable = raggedbottomVar, onvalue = 1, offvalue = 0, height=1)
-raggedbottomCheckBox.grid(row=rowvar, column=0, sticky=W)
+# bottom justify
+bottomjustifyVar = IntVar(value=1)
+bottomjustifyCheckBox = Checkbutton(docframe, text = "Bottom Justify", variable = bottomjustifyVar, onvalue = 1, offvalue = 0, height=1)
+bottomjustifyCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
-# ragged last bottom
-raggedlastbottomVar = IntVar()
-raggedlastbottomCheckBox = Checkbutton(docframe, text = "Ragged Last Bottom", variable = raggedlastbottomVar, onvalue = 1, offvalue = 0, height=1)
-raggedlastbottomCheckBox.grid(row=rowvar, column=0, sticky=W)
-rowvar = rowvar + 1
-
-# paper size
-raggedlastbottomVar = IntVar()
-raggedlastbottomCheckBox = Checkbutton(docframe, text = "Ragged Last Bottom", variable = raggedlastbottomVar, onvalue = 1, offvalue = 0, height=1)
-raggedlastbottomCheckBox.grid(row=rowvar, column=0, sticky=W)
+# last bottom justify
+lastbottomjustifyVar = IntVar(value=1)
+lastbottomjustifyCheckBox = Checkbutton(docframe, text = "Last Bottom Justify", variable = lastbottomjustifyVar, onvalue = 1, offvalue = 0, height=1)
+lastbottomjustifyCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 # program settings frame

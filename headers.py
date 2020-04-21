@@ -1,7 +1,7 @@
-worksheetheader = """\\version "2.18.2"
+lilypondheader = """\\version "2.18.2"
 
 \header {{
-\ttitle = \markup {{ {font} \\fontsize #+3 {{ {title} }}}}
+\ttitle = \markup {{ {font} \\fontsize #+3 {{ {title} {keytitle} }}}}
 \tsubtitle = \markup {{ {font} \\fontsize #+2 Name:_______________________ }}
 \ttagline = \markup {{ {font} \\fontsize #+1 {{ {tag} }}}}
 \t}}
@@ -11,13 +11,4 @@ worksheetheader = """\\version "2.18.2"
 \tragged-bottom = ##f
 \tragged-last-bottom = ##f
 
-"""
-
-keysheetheader = """\\version "2.18.2"
-
-\header {{
-\ttitle = \markup {{ {font} \\fontsize #+3 {{ {title} \with-color #red Key }}}}
-\tsubtitle = \markup {{ {font} \\fontsize #+2 Name:_______________________ }}
-\ttagline = \markup {{ {font} \\fontsize #+1 {{ {tag} }}}}
-\t}}
 """
