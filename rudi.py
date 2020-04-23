@@ -23,10 +23,6 @@ defaultfolder = path.expanduser('~')
 ###################################################
 # Definitions
 ###################################################
-# startup
-def preguiinit():
-    initconfigfile()
-
 ### CONFIG FILE STUFF ###
 def initconfigfile():
     global defaultfolder
@@ -95,7 +91,7 @@ def savesettings():
 def create():
     docfont,docboldfont = initcustomfonts()
     worksheetfile,keysheetfile = start_ly_file(docfont,docboldfont)
-    # scales()
+    intervals(worksheetfile,keysheetfile,docfont,docboldfont)
     endfile(worksheetfile,keysheetfile)
 #######################################################
 
@@ -168,14 +164,7 @@ def start_ly_file(docfont,docboldfont):
     # return the sheet filenames for subsequent writes
     return worksheetfile,keysheetfile
 
-# scales
-def scales():
-    if majorScaleVar.get() == 1:
-        print("you asked for major scales")
-    if minorScaleVar.get() == 1:
-        print("you asked for minor scales")
-    if modesScaleVar.get() == 1:
-        print("you asked for modes")
+
 
 def endfile(worksheetfile,keysheetfile):
     worksheetfile.close()
@@ -451,5 +440,5 @@ savebuttonButton.grid(row=framerow, column=0, sticky=(S) ,padx=xpadding, pady=yp
 ###################################################
 # this starts the main program
 ###################################################
-preguiinit()
+initconfigfile()
 root.mainloop()
