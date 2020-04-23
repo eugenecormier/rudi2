@@ -287,8 +287,26 @@ copyrightEntry = Entry(titlesframe, width=50)
 copyrightEntry.grid(row=rowvar, column=1, padx=xpadding, pady=ypadding)
 rowvar = rowvar + 1
 
+###################################################
+# Basics tab widgets
+###################################################
+# Intervals frame
+framerow = 0
+intervalsframe = ttk.LabelFrame(basicstab, text='Intervals', relief=GROOVE, borderwidth=2)
+intervalsframe.grid(row=framerow, column=0, sticky=(W, E, N), padx=xpadding, pady=ypadding)
+framerow = framerow + 1
+rowvar = 0
 
-
+# intervals selection
+intervalsVar = IntVar(value=0)
+intervalsCheckBox = Checkbutton(intervalsframe, text = "Interval fill in boxes", variable = intervalsVar, onvalue = 1, offvalue = 0, height=1)
+intervalsCheckBox.grid(row=rowvar, column=0, sticky=W)
+# intervals number of questions
+intervalsnumberVar = StringVar()
+intervalsnumberVar.set("10")
+intervalsnumberBox = Spinbox(intervalsframe, from_=0, to=100, width=3, textvariable=intervalsnumberVar)
+intervalsnumberBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
 
 ###################################################
 # Scales tab widgets
