@@ -27,6 +27,7 @@ defaultfolder = path.expanduser('~')
 def preguiinit():
     initconfigfile()
 
+### CONFIG FILE STUFF ###
 def initconfigfile():
     global defaultfolder
     # if file does not exist, create it, populate it with defaults, and save it
@@ -41,7 +42,12 @@ def initconfigfile():
                               'BottomJustify': 1,
                               'LastBottomJustify': 1,
                               'PaperSize': 'Letter',
-                              'PaperOrientation': 'Portrait'}
+                              'PaperOrientation': 'Portrait',
+                              'Scaling': '22',
+                              'TrebleWeight': '10',
+                              'AltoWeight': '2',
+                              'TenorWeight': '1',
+                              'BassWeight': '8'}
         config.write(configfile)
         # close file
         configfile.close()
@@ -58,6 +64,11 @@ def initconfigfile():
         lastbottomjustifyVar.set(config['SETTINGS']['lastbottomjustify'])
         papersizeVar.set(config['SETTINGS']['papersize'])
         paperorientationVar.set(config['SETTINGS']['paperorientation'])
+        scalingVar.set(config['SETTINGS']['scaling'])
+        trebleVar.set(config['SETTINGS']['trebleweight'])
+        altoVar.set(config['SETTINGS']['altoweight'])
+        tenorVar.set(config['SETTINGS']['tenorweight'])
+        bassVar.set(config['SETTINGS']['bassweight'])
         # update button text
         defaultworkingfolderButton.config(text=defaultfolder)
 
@@ -71,7 +82,12 @@ def savesettings():
                           'BottomJustify': bottomjustifyVar.get(),
                           'LastBottomJustify': lastbottomjustifyVar.get(),
                           'PaperSize': papersizeVar.get(),
-                          'PaperOrientation': paperorientationVar.get()}
+                          'PaperOrientation': paperorientationVar.get(),
+                          'Scaling': scalingVar.get(),
+                          'TrebleWeight': trebleVar.get(),
+                          'AltoWeight': altoVar.get(),
+                          'TenorWeight': tenorVar.get(),
+                          'BassWeight': bassVar.get()}
     config.write(configfile)
     configfile.close()
 
@@ -100,7 +116,7 @@ def start_ly_file(docfont,docboldfont):
     # open files for writing
     worksheetfile = open(worksheetfilename, 'w')
     keysheetfile = open(keysheetfilename, 'w')
-    # set up header variables
+    # set up header variables/options
     # titles
     if titleEntry.get() != '':
         doctitle = titleEntry.get()
@@ -111,14 +127,44 @@ def start_ly_file(docfont,docboldfont):
         doctag = copyrightEntry.get()
     else:
         doctag = 'Created by rudi v2.0'
+    # right justify
+    if rightjustVar.get() == 1:
+        raggedrightvar = 'ragged-right = ##f'
+    else:
+        raggedrightvar = 'ragged-right = ##t'
+    # bottom justify
+    if bottomjustifyVar.get() == 1:
+        raggedbottomvar = 'ragged-bottom = ##f'
+    else:
+        raggedbottomvar = 'ragged-bottom = ##t'
+    # last bottom justify
+    if lastbottomjustifyVar.get() == 1:
+        raggedlastbottomvar = 'ragged-last-bottom = ##f'
+    else:
+        raggedlastbottomvar = 'ragged-last-bottom = ##t'
+    # paper size is in the header write block directly
+    # paper orientation
+    if paperorientationVar.get() == 'Landscape':
+        orientationvar = " 'landscape"
+    else:
+        orientationvar = ''
+    # scaling is in the header write block directly
 
-    # TODO Section
-    # right justify section
-    #if rightjustVar.get() ='':
 
     # write the header to file
-    worksheetfile.writelines(headers.lilypondheader.format(title=doctitle,font=docfont,boldfont=docboldfont,tag=doctag,keytitle=''))
-    keysheetfile.writelines(headers.lilypondheader.format(title=doctitle,font=docfont,boldfont=docboldfont,tag=doctag,keytitle='\with-color #red Key'))
+    worksheetfile.writelines(headers.lilypondheader.format(title=doctitle,font=docfont,boldfont=docboldfont,
+                                                           tag=doctag,keytitle='',
+                                                           raggedright=raggedrightvar,raggedbottom=raggedbottomvar,
+                                                           raggedlastbottom=raggedlastbottomvar,
+                                                           papersize=papersizeVar.get(),orientation=orientationvar,
+                                                           scaling=scalingVar.get()))
+    keysheetfile.writelines(headers.lilypondheader.format(title=doctitle,font=docfont,boldfont=docboldfont,
+                                                          tag=doctag,keytitle='\with-color #red Key',
+                                                          raggedright=raggedrightvar,raggedbottom=raggedbottomvar,
+                                                          raggedlastbottom=raggedlastbottomvar,
+                                                          papersize=papersizeVar.get(),orientation=orientationvar,
+                                                          scaling=scalingVar.get()))
+
     # return the sheet filenames for subsequent writes
     return worksheetfile,keysheetfile
 
@@ -198,7 +244,7 @@ root.rowconfigure(0, weight=1)
 tab_parent = ttk.Notebook(mainframe, padding="2 5 2 5")
 tab_parent.grid(row=0, column=0, sticky=(N, W, E))
 # these are the tabs
-welcometab = ttk.Frame(tab_parent)
+starttab = ttk.Frame(tab_parent)
 basicstab = ttk.Frame(tab_parent)
 scalestab = ttk.Frame(tab_parent)
 intervalstab = ttk.Frame(tab_parent)
@@ -207,7 +253,7 @@ cadencestab = ttk.Frame(tab_parent)
 settingstab = ttk.Frame(tab_parent)
 settingstab.grid(column=0, row=0, sticky=(W, E))
 # add the previous tabs to the window with titles
-tab_parent.add(welcometab, text="Start")
+tab_parent.add(starttab, text="Start")
 tab_parent.add(basicstab, text="Basics")
 tab_parent.add(scalestab, text="Scales")
 tab_parent.add(intervalstab, text="Intervals")
@@ -231,15 +277,29 @@ filenameEntry.grid(row=0, column=1, padx=5)
 ###################################################
 # Start tab widgets
 ###################################################
-titleLabel = Label(welcometab, text="Title:")
-titleLabel.grid(row=0, column=0, padx=xpadding, pady=ypadding)
-titleEntry = Entry(welcometab, width=50)
-titleEntry.grid(row=0, column=1, padx=xpadding, pady=ypadding)
+# titles frame
+framerow = 0
+titlesframe = ttk.LabelFrame(starttab, text='Titles', relief=GROOVE, borderwidth=2)
+titlesframe.grid(row=framerow, column=0, sticky=(W, E, N), padx=xpadding, pady=ypadding)
+framerow = framerow + 1
+rowvar = 0
 
-copyrightLabel = Label(welcometab, text="Copyright:")
-copyrightLabel.grid(row=1, column=0, padx=xpadding, pady=ypadding)
-copyrightEntry = Entry(welcometab, width=50)
-copyrightEntry.grid(row=1, column=1, padx=xpadding, pady=ypadding)
+# title
+titleLabel = Label(titlesframe, text="Title:")
+titleLabel.grid(row=rowvar, column=0, padx=xpadding, pady=ypadding)
+titleEntry = Entry(titlesframe, width=50)
+titleEntry.grid(row=rowvar, column=1, padx=xpadding, pady=ypadding)
+rowvar = rowvar + 1
+
+# copyright
+copyrightLabel = Label(titlesframe, text="Copyright:")
+copyrightLabel.grid(row=rowvar, column=0, padx=xpadding, pady=ypadding)
+copyrightEntry = Entry(titlesframe, width=50)
+copyrightEntry.grid(row=rowvar, column=1, padx=xpadding, pady=ypadding)
+rowvar = rowvar + 1
+
+
+
 
 ###################################################
 # Scales tab widgets
@@ -259,9 +319,12 @@ modesScaleCheckBox.grid(row=2, column=0, sticky=W)
 ###################################################
 # Settings tab widgets
 ###################################################
-# document settings frame
+
+####### document settings frame #######
+framerow = 0
 docframe = ttk.LabelFrame(settingstab, text='Document Settings', relief=GROOVE, borderwidth=2)
-docframe.grid(row=0, column=0, sticky=(N, W, S, E), padx=xpadding, pady=ypadding)
+docframe.grid(row=framerow, column=0, sticky=(N, W, S, E), padx=xpadding, pady=ypadding)
+framerow = framerow + 1
 rowvar = 0
 
 # font
@@ -278,7 +341,7 @@ papersizeLabel = Label(docframe, text="Page Size:")
 papersizeLabel.grid(row=rowvar, column=0, sticky=(W) ,padx=xpadding, pady=ypadding)
 papersizeVar = StringVar()
 papersizeVar.set('Letter')
-papersizeMenu = OptionMenu(docframe, papersizeVar, *{'Letter', 'Legal', 'A4'})
+papersizeMenu = OptionMenu(docframe, papersizeVar, 'Letter', 'Legal', 'A4')
 papersizeMenu.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
@@ -287,7 +350,7 @@ paperorientationLabel = Label(docframe, text="Orientation:")
 paperorientationLabel.grid(row=rowvar, column=0, sticky=(W) ,padx=xpadding, pady=ypadding)
 paperorientationVar = StringVar()
 paperorientationVar.set('Portrait')
-paperorientationMenu = OptionMenu(docframe, paperorientationVar, *{'Portrait', 'Landscape'})
+paperorientationMenu = OptionMenu(docframe, paperorientationVar, 'Portrait', 'Landscape')
 paperorientationMenu.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
@@ -309,14 +372,66 @@ lastbottomjustifyCheckBox = Checkbutton(docframe, text = "Last Bottom Justify", 
 lastbottomjustifyCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
-# program settings frame
+# notation scaling
+scalingLabel = Label(docframe, text="Scaling:")
+scalingLabel.grid(row=rowvar, column=0, sticky=(W) ,padx=xpadding, pady=ypadding)
+scalingVar = StringVar()
+scalingVar.set("22")
+scalingBox = Spinbox(docframe, from_=5, to=30, width=3, textvariable=scalingVar)
+scalingBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+####### random clef frame #######
+clefsframe = ttk.LabelFrame(settingstab, text='Random Clef Selection Weights', relief=GROOVE, borderwidth=2)
+clefsframe.grid(row=framerow, column=0, sticky=(W, E), padx=xpadding, pady=ypadding)
+framerow = framerow + 1
+rowvar = 0
+
+# treble clef
+trebleLabel = Label(clefsframe, text="Treble:")
+trebleLabel.grid(row=rowvar, column=0, padx=xpadding, pady=ypadding)
+trebleVar = StringVar()
+trebleVar.set("10")
+trebleBox = Spinbox(clefsframe, from_=0, to=100, width=3, textvariable=trebleVar)
+trebleBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+# alto clef
+altoLabel = Label(clefsframe, text="Alto:")
+altoLabel.grid(row=rowvar, column=0, padx=xpadding, pady=ypadding)
+altoVar = StringVar()
+altoVar.set("2")
+altoBox = Spinbox(clefsframe, from_=0, to=100, width=3, textvariable=altoVar)
+altoBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+# tenor clef
+tenorLabel = Label(clefsframe, text="Tenor:")
+tenorLabel.grid(row=rowvar, column=0, padx=xpadding, pady=ypadding)
+tenorVar = StringVar()
+tenorVar.set("1")
+tenorBox = Spinbox(clefsframe, from_=0, to=100, width=3, textvariable=tenorVar)
+tenorBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+# bass clef
+bassLabel = Label(clefsframe, text="Bass:")
+bassLabel.grid(row=rowvar, column=0, padx=xpadding, pady=ypadding)
+bassVar = StringVar()
+bassVar.set("8")
+bassBox = Spinbox(clefsframe, from_=0, to=100, width=3, textvariable=bassVar)
+bassBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+####### program settings frame #######
 progframe = ttk.LabelFrame(settingstab, text='Program Settings', relief=GROOVE, borderwidth=2)
-progframe.grid(row=1, column=0, sticky=(W, E, N), padx=xpadding, pady=ypadding)
+progframe.grid(row=framerow, column=0, sticky=(W, E, N), padx=xpadding, pady=ypadding)
+framerow = framerow + 1
 rowvar = 0
 
 # delete temp files
 deletefilesVar = IntVar()
-deletefilesCheckBox = Checkbutton(progframe, text = "Delete intermediate files", variable = deletefilesVar, onvalue = 1, offvalue = 0, height=1)
+deletefilesCheckBox = Checkbutton(progframe, text = "Delete intermediate files **need to fix this**", variable = deletefilesVar, onvalue = 1, offvalue = 0, height=1)
 deletefilesCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
@@ -331,7 +446,7 @@ rowvar = rowvar + 1
 # this must be the last entry
 savebuttonButton = ttk.Button(settingstab, text='Save Settings', command=savesettings)
 # not sure about the South sticky, but it looks ok for now
-savebuttonButton.grid(row=2, column=0, sticky=(S) ,padx=xpadding, pady=ypadding)
+savebuttonButton.grid(row=framerow, column=0, sticky=(S) ,padx=xpadding, pady=ypadding)
 
 ###################################################
 # this starts the main program
