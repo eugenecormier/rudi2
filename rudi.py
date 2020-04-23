@@ -11,6 +11,7 @@ from os import path  # for working cross platform with files/folders
 import configparser  # for working with settings files (.ini)
 # my data files
 import headers
+import intervals
 
 ###################################################
 # Initial Variables
@@ -91,7 +92,7 @@ def savesettings():
 def create():
     docfont,docboldfont = initcustomfonts()
     worksheetfile,keysheetfile = start_ly_file(docfont,docboldfont)
-    intervals(worksheetfile,keysheetfile,docfont,docboldfont)
+    #intervals(worksheetfile,keysheetfile,docfont,docboldfont)
     endfile(worksheetfile,keysheetfile)
 #######################################################
 

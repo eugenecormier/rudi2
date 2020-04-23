@@ -27,4 +27,6 @@ nobarlinenumbers = {{ \override Score.BarNumber #'transparent = ##t }}
 noclef = {{ \override Staff.Clef #'transparent = ##t }}
 nokeycancel = {{ \set Staff.printKeyCancellation = ##f }}
 noclefresize = {{ \override Staff.Clef #'full-size-change = ##t }}
+
+{{s1}}
 """
