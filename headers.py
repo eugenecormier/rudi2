@@ -4,9 +4,9 @@ lilypondheader = """%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \\version "2.18.2"
 
 \header {{
-\ttitle = \markup {{ {font} \\fontsize #+3 {{ {title} {keytitle} }}}}
-\tsubtitle = \markup {{ {font} \\fontsize #+2 Name:_______________________ }}
-\ttagline = \markup {{ {font} \\fontsize #+1 {{ {tag} }}}}
+\ttitle = \markup {font} \\fontsize #+3 {{ {title}{keytitle} }}
+\tsubtitle = \markup {font} \\fontsize #+2 {{ Name:_______________________ }}
+\ttagline = \markup {font} \\fontsize #+1 {{ {tag} }}
 \t}}
 
 \paper {{
@@ -15,8 +15,8 @@ lilypondheader = """%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \t{raggedlastbottom}
 \t#(set-paper-size "{papersize}"{orientation})
 \t}}
-\t#(set-global-staff-size {scaling})
-\tindent = 0
+#(set-global-staff-size {scaling})
+indent = 0
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BAKED IN LILYPOND FUNCTIONS
@@ -28,5 +28,6 @@ noclef = {{ \override Staff.Clef #'transparent = ##t }}
 nokeycancel = {{ \set Staff.printKeyCancellation = ##f }}
 noclefresize = {{ \override Staff.Clef #'full-size-change = ##t }}
 
-{{s1}}
+\markup \\null 
+
 """

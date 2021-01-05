@@ -9,9 +9,11 @@ from tkinter import filedialog  # for save folder
 import time  # for default filenames with date
 from os import path  # for working cross platform with files/folders
 import configparser  # for working with settings files (.ini)
+import random
+
 # my data files
 import headers
-import auralintervals
+import auralintervalsdata
 
 import footers
 
@@ -100,7 +102,7 @@ def createButton():
 
 def initcustomfonts():
     if fontEntry.get() != '':
-        return '\override #\'(font-name . "' + fontEntry.get() + '") ','\override #\'(font-name . "' + fontEntry.get() + ' Bold") '
+        return '\override #\'(font-name . "' + fontEntry.get() + '")','\override #\'(font-name . "' + fontEntry.get() + ' Bold") '
     else:
         return '','\\bold'
 
@@ -155,23 +157,72 @@ def start_ly_file(docfont,docboldfont):
                                                            tag=doctag,keytitle='',
                                                            raggedright=raggedrightvar,raggedbottom=raggedbottomvar,
                                                            raggedlastbottom=raggedlastbottomvar,
-                                                           papersize=papersizeVar.get(),orientation=orientationvar,
+                                                           papersize=papersizeVar.get().lower(),orientation=orientationvar,
                                                            scaling=scalingVar.get()))
     keysheetfile.writelines(headers.lilypondheader.format(title=doctitle,font=docfont,boldfont=docboldfont,
                                                           tag=doctag,keytitle='\with-color #red Key',
                                                           raggedright=raggedrightvar,raggedbottom=raggedbottomvar,
                                                           raggedlastbottom=raggedlastbottomvar,
-                                                          papersize=papersizeVar.get(),orientation=orientationvar,
+                                                          papersize=papersizeVar.get().lower(),orientation=orientationvar,
                                                           scaling=scalingVar.get()))
 
     # return the sheet filenames for subsequent writes
     return worksheetfile,keysheetfile
 
 def auralintervals(worksheetfile,keysheetfile,docfont,docboldfont):
-    if auralintervalsVar.get() == 0:
-        print('auralintervals off')
-    elif auralintervalsVar.get() == 1:
-        print('auralintervals on')
+    if auralintervalsVar.get() == 1:
+        # init variables
+        intervals = []
+        worksheetdata = ''
+        keydata = ''
+
+        # poll for user chosen intervals and add to the 'intervals' list above
+        if PPVar.get() == 1:
+            intervals.append('PP')
+        if m2Var.get() == 1:
+            intervals.append('m2')
+        if M2Var.get() == 1:
+            intervals.append('M2')
+        if m3Var.get() == 1:
+            intervals.append('m3')
+        if M3Var.get() == 1:
+            intervals.append('M3')
+        if P4Var.get() == 1:
+            intervals.append('P4')
+        if TTVar.get() == 1:
+            intervals.append('TT')
+        if P5Var.get() == 1:
+            intervals.append('P5')
+        if m6Var.get() == 1:
+            intervals.append('m6')
+        if M6Var.get() == 1:
+            intervals.append('M6')
+        if m7Var.get() == 1:
+            intervals.append('m7')
+        if M7Var.get() == 1:
+            intervals.append('M7')
+        if P8Var.get() == 1:
+            intervals.append('P8')
+
+        # create the questions variable
+        for i in range(10):
+            if i in range(int(auralintervalsnumberVar.get())):
+                print(i +1)
+                worksheetdata += str(auralintervalsdata.columnstart.format())
+                keydata += str(auralintervalsdata.columnstart.format())
+                count = i + 1
+                while count - 1 in range(int(auralintervalsnumberVar.get())):
+                    worksheetdata += str(auralintervalsdata.loop.format(number=count,answer='\hspace # 4'))
+                    keydata += str(auralintervalsdata.loop.format(number=count,answer='\with-color #red ' + random.choice(intervals)))
+                    count += 10
+                worksheetdata += ' } '
+                keydata += ' } '
+
+        # write out results
+        worksheetfile.writelines(auralintervalsdata.header.format(font=docfont,boldfont=docboldfont,masterloop=worksheetdata))
+        keysheetfile.writelines(auralintervalsdata.header.format(font=docfont,boldfont=docboldfont,masterloop=keydata))
+
+
 
 def endfile(worksheetfile,keysheetfile):
     worksheetfile.writelines(footers.lilypondfooter)
@@ -322,69 +373,69 @@ intervalTypeLabel = Label(auralintervalsframe, text="\nInterval Types:")
 intervalTypeLabel.grid(row=rowvar, column=0, padx=xpadding, pady=ypadding)
 rowvar = rowvar + 1
 
-PPVar = IntVar(value=0)
+PPVar = IntVar(value=1)
 PPCheckBox = Checkbutton(auralintervalsframe, text = "PP", variable = PPVar, onvalue = 1, offvalue = 0, height=1)
 PPCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
-m2Var = IntVar(value=0)
+m2Var = IntVar(value=1)
 m2CheckBox = Checkbutton(auralintervalsframe, text = "m2", variable = m2Var, onvalue = 1, offvalue = 0, height=1)
 m2CheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
-M2Var = IntVar(value=0)
+M2Var = IntVar(value=1)
 M2CheckBox = Checkbutton(auralintervalsframe, text = "M2", variable = M2Var, onvalue = 1, offvalue = 0, height=1)
 M2CheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
-m3Var = IntVar(value=0)
+m3Var = IntVar(value=1)
 m3CheckBox = Checkbutton(auralintervalsframe, text = "m3", variable = m3Var, onvalue = 1, offvalue = 0, height=1)
 m3CheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
-M3Var = IntVar(value=0)
+M3Var = IntVar(value=1)
 M3CheckBox = Checkbutton(auralintervalsframe, text = "M3", variable = M3Var, onvalue = 1, offvalue = 0, height=1)
 M3CheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
-P4Var = IntVar(value=0)
+P4Var = IntVar(value=1)
 P4CheckBox = Checkbutton(auralintervalsframe, text = "P4", variable = P4Var, onvalue = 1, offvalue = 0, height=1)
 P4CheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
-TTVar = IntVar(value=0)
+TTVar = IntVar(value=1)
 TTCheckBox = Checkbutton(auralintervalsframe, text = "TT", variable = TTVar, onvalue = 1, offvalue = 0, height=1)
 TTCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 # column split
 rowvar = 2
-P5Var = IntVar(value=0)
+P5Var = IntVar(value=1)
 P5CheckBox = Checkbutton(auralintervalsframe, text = "P5", variable = P5Var, onvalue = 1, offvalue = 0, height=1)
 P5CheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
-m6Var = IntVar(value=0)
+m6Var = IntVar(value=1)
 m6CheckBox = Checkbutton(auralintervalsframe, text = "m6", variable = m6Var, onvalue = 1, offvalue = 0, height=1)
 m6CheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
-M6Var = IntVar(value=0)
+M6Var = IntVar(value=1)
 M6CheckBox = Checkbutton(auralintervalsframe, text = "M6", variable = M6Var, onvalue = 1, offvalue = 0, height=1)
 M6CheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
-m7Var = IntVar(value=0)
+m7Var = IntVar(value=1)
 m7CheckBox = Checkbutton(auralintervalsframe, text = "m7", variable = m7Var, onvalue = 1, offvalue = 0, height=1)
 m7CheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
-M7Var = IntVar(value=0)
+M7Var = IntVar(value=1)
 M7CheckBox = Checkbutton(auralintervalsframe, text = "M7", variable = M7Var, onvalue = 1, offvalue = 0, height=1)
 M7CheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
-P8Var = IntVar(value=0)
+P8Var = IntVar(value=1)
 P8CheckBox = Checkbutton(auralintervalsframe, text = "P8", variable = P8Var, onvalue = 1, offvalue = 0, height=1)
 P8CheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
