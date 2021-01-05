@@ -11,7 +11,9 @@ from os import path  # for working cross platform with files/folders
 import configparser  # for working with settings files (.ini)
 # my data files
 import headers
-import intervals
+import auralintervals
+
+import footers
 
 ###################################################
 # Initial Variables
@@ -89,10 +91,10 @@ def savesettings():
     configfile.close()
 
 # main program ########################################
-def create():
+def createButton():
     docfont,docboldfont = initcustomfonts()
     worksheetfile,keysheetfile = start_ly_file(docfont,docboldfont)
-    #intervals(worksheetfile,keysheetfile,docfont,docboldfont)
+    auralintervals(worksheetfile,keysheetfile,docfont,docboldfont)
     endfile(worksheetfile,keysheetfile)
 #######################################################
 
@@ -165,9 +167,15 @@ def start_ly_file(docfont,docboldfont):
     # return the sheet filenames for subsequent writes
     return worksheetfile,keysheetfile
 
-
+def auralintervals(worksheetfile,keysheetfile,docfont,docboldfont):
+    if auralintervalsVar.get() == 0:
+        print('auralintervals off')
+    elif auralintervalsVar.get() == 1:
+        print('auralintervals on')
 
 def endfile(worksheetfile,keysheetfile):
+    worksheetfile.writelines(footers.lilypondfooter)
+    keysheetfile.writelines(footers.lilypondfooter)
     worksheetfile.close()
     keysheetfile.close()
 
@@ -184,7 +192,7 @@ def selectsavefolder():
 # Main Window
 ###################################################
 root = Tk()
-root.title("Rudi 2")
+root.title("Rudi 1.9.1")
 # the following block hides hidden folders in the folder picker
 try:
     # call a dummy dialog with an impossible option to initialize the file
@@ -235,7 +243,7 @@ tab_parent = ttk.Notebook(mainframe, padding="2 5 2 5")
 tab_parent.grid(row=0, column=0, sticky=(N, W, E))
 # these are the tabs
 starttab = ttk.Frame(tab_parent)
-basicstab = ttk.Frame(tab_parent)
+auralintervalstab = ttk.Frame(tab_parent)
 scalestab = ttk.Frame(tab_parent)
 intervalstab = ttk.Frame(tab_parent)
 chordstab = ttk.Frame(tab_parent)
@@ -244,7 +252,7 @@ settingstab = ttk.Frame(tab_parent)
 settingstab.grid(column=0, row=0, sticky=(W, E))
 # add the previous tabs to the window with titles
 tab_parent.add(starttab, text="Start")
-tab_parent.add(basicstab, text="Basics")
+tab_parent.add(auralintervalstab, text="Aural Intervals")
 tab_parent.add(scalestab, text="Scales")
 tab_parent.add(intervalstab, text="Intervals")
 tab_parent.add(chordstab, text="Chords")
@@ -256,7 +264,7 @@ tab_parent.pack(expand=1, fill='both')
 ###################################################
 # button
 ###################################################
-button_parent = ttk.Button(subframe, text='Create', command=create)
+button_parent = ttk.Button(subframe, text='Create', command=createButton)
 button_parent.grid(column=2, row=0)
 # output filename
 filenameLabel = Label(subframe, text="Filename:")
@@ -289,25 +297,108 @@ copyrightEntry.grid(row=rowvar, column=1, padx=xpadding, pady=ypadding)
 rowvar = rowvar + 1
 
 ###################################################
-# Basics tab widgets
+# auralintervals tab widgets
 ###################################################
-# Intervals frame
+# auralintervals frame
 framerow = 0
-intervalsframe = ttk.LabelFrame(basicstab, text='Intervals', relief=GROOVE, borderwidth=2)
-intervalsframe.grid(row=framerow, column=0, sticky=(W, E, N), padx=xpadding, pady=ypadding)
+auralintervalsframe = ttk.LabelFrame(auralintervalstab, text='Aural Intervals', relief=GROOVE, borderwidth=2)
+auralintervalsframe.grid(row=framerow, column=0, sticky=(W, E, N), padx=xpadding, pady=ypadding)
 framerow = framerow + 1
 rowvar = 0
 
 # intervals selection
-intervalsVar = IntVar(value=0)
-intervalsCheckBox = Checkbutton(intervalsframe, text = "Interval fill in boxes", variable = intervalsVar, onvalue = 1, offvalue = 0, height=1)
-intervalsCheckBox.grid(row=rowvar, column=0, sticky=W)
+auralintervalsVar = IntVar(value=0)
+auralintervalsCheckBox = Checkbutton(auralintervalsframe, text = "Interval fill in boxes", variable = auralintervalsVar, onvalue = 1, offvalue = 0, height=1)
+auralintervalsCheckBox.grid(row=rowvar, column=0, sticky=W)
 # intervals number of questions
-intervalsnumberVar = StringVar()
-intervalsnumberVar.set("10")
-intervalsnumberBox = Spinbox(intervalsframe, from_=0, to=100, width=3, textvariable=intervalsnumberVar)
-intervalsnumberBox.grid(row=rowvar, column=1, sticky=W)
+auralintervalsnumberVar = StringVar()
+auralintervalsnumberVar.set("10")
+auralintervalsnumberBox = Spinbox(auralintervalsframe, from_=0, to=100, width=3, textvariable=auralintervalsnumberVar)
+auralintervalsnumberBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
+
+# interval types to include in questions
+intervalTypeLabel = Label(auralintervalsframe, text="\nInterval Types:")
+intervalTypeLabel.grid(row=rowvar, column=0, padx=xpadding, pady=ypadding)
+rowvar = rowvar + 1
+
+PPVar = IntVar(value=0)
+PPCheckBox = Checkbutton(auralintervalsframe, text = "PP", variable = PPVar, onvalue = 1, offvalue = 0, height=1)
+PPCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+m2Var = IntVar(value=0)
+m2CheckBox = Checkbutton(auralintervalsframe, text = "m2", variable = m2Var, onvalue = 1, offvalue = 0, height=1)
+m2CheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+M2Var = IntVar(value=0)
+M2CheckBox = Checkbutton(auralintervalsframe, text = "M2", variable = M2Var, onvalue = 1, offvalue = 0, height=1)
+M2CheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+m3Var = IntVar(value=0)
+m3CheckBox = Checkbutton(auralintervalsframe, text = "m3", variable = m3Var, onvalue = 1, offvalue = 0, height=1)
+m3CheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+M3Var = IntVar(value=0)
+M3CheckBox = Checkbutton(auralintervalsframe, text = "M3", variable = M3Var, onvalue = 1, offvalue = 0, height=1)
+M3CheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+P4Var = IntVar(value=0)
+P4CheckBox = Checkbutton(auralintervalsframe, text = "P4", variable = P4Var, onvalue = 1, offvalue = 0, height=1)
+P4CheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+TTVar = IntVar(value=0)
+TTCheckBox = Checkbutton(auralintervalsframe, text = "TT", variable = TTVar, onvalue = 1, offvalue = 0, height=1)
+TTCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+# column split
+rowvar = 2
+P5Var = IntVar(value=0)
+P5CheckBox = Checkbutton(auralintervalsframe, text = "P5", variable = P5Var, onvalue = 1, offvalue = 0, height=1)
+P5CheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+m6Var = IntVar(value=0)
+m6CheckBox = Checkbutton(auralintervalsframe, text = "m6", variable = m6Var, onvalue = 1, offvalue = 0, height=1)
+m6CheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+M6Var = IntVar(value=0)
+M6CheckBox = Checkbutton(auralintervalsframe, text = "M6", variable = M6Var, onvalue = 1, offvalue = 0, height=1)
+M6CheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+m7Var = IntVar(value=0)
+m7CheckBox = Checkbutton(auralintervalsframe, text = "m7", variable = m7Var, onvalue = 1, offvalue = 0, height=1)
+m7CheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+M7Var = IntVar(value=0)
+M7CheckBox = Checkbutton(auralintervalsframe, text = "M7", variable = M7Var, onvalue = 1, offvalue = 0, height=1)
+M7CheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+P8Var = IntVar(value=0)
+P8CheckBox = Checkbutton(auralintervalsframe, text = "P8", variable = P8Var, onvalue = 1, offvalue = 0, height=1)
+P8CheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+
+
+
+
+
+
+
+
+
+
 
 ###################################################
 # Scales tab widgets
