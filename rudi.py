@@ -21,8 +21,8 @@ import footers
 ###################################################
 # Initial Variables
 ###################################################
-xpadding=5
-ypadding=5
+xpadding=20
+ypadding=8
 defaultfolder = path.expanduser('~')
 
 ###################################################
@@ -406,10 +406,8 @@ rowvar = rowvar + 1
 # basics tab widgets
 ###################################################
 ### auralintervals frame
-framerow = 0
 auralintervalsframe = ttk.LabelFrame(basicstab, text='Aural Intervals', relief=GROOVE, borderwidth=2)
-auralintervalsframe.grid(row=framerow, column=0, sticky=(W, E, N), padx=xpadding, pady=ypadding)
-framerow = framerow + 1
+auralintervalsframe.grid(row=0, column=0, sticky=(W, E, N), padx=xpadding, pady=ypadding)
 rowvar = 0
 
 # intervals selection
@@ -424,7 +422,7 @@ auralintervalsnumberBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
 # interval types to include in questions
-intervalTypeLabel = Label(auralintervalsframe, text="\nInterval Types:")
+intervalTypeLabel = Label(auralintervalsframe, text="Interval Types:")
 intervalTypeLabel.grid(row=rowvar, column=0, padx=xpadding, pady=ypadding)
 rowvar = rowvar + 1
 
@@ -497,36 +495,109 @@ rowvar = rowvar + 1
 
 ###################################################
 ### Draw Clefs frame
-framerow = 0
 drawclefsframe = ttk.LabelFrame(basicstab, text='Clefs', relief=GROOVE, borderwidth=2)
-drawclefsframe.grid(row=framerow, column=1, sticky=(W, E, N), padx=xpadding, pady=ypadding)
-framerow = framerow + 1
+drawclefsframe.grid(row=0, column=1, sticky=(W, E, N), padx=xpadding, pady=ypadding)
 rowvar = 0
 
 drawclefsVar = IntVar(value=0)
 drawclefsCheckBox = Checkbutton(drawclefsframe, text = "Draw Clefs", variable = drawclefsVar, onvalue = 1, offvalue = 0, height=1)
 drawclefsCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
 
 # clef selection
+drawclefsclefselectionLabel = Label(drawclefsframe, text="Clefs:")
+drawclefsclefselectionLabel.grid(row=rowvar, column=0, padx=xpadding, pady=ypadding)
+rowvar = rowvar + 1
+
 drawtrebleclefVar = IntVar(value=1)
 drawtrebleclefCheckBox = Checkbutton(drawclefsframe, text = "Treble", variable = drawtrebleclefVar, onvalue = 1, offvalue = 0, height=1)
-drawtrebleclefCheckBox.grid(row=rowvar, column=1, sticky=W)
+drawtrebleclefCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 drawaltoclefVar = IntVar(value=1)
 drawaltoclefCheckBox = Checkbutton(drawclefsframe, text = "Alto", variable = drawaltoclefVar, onvalue = 1, offvalue = 0, height=1)
-drawaltoclefCheckBox.grid(row=rowvar, column=1, sticky=W)
+drawaltoclefCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 drawtenorclefVar = IntVar(value=1)
 drawtenorclefCheckBox = Checkbutton(drawclefsframe, text = "Tenor", variable = drawtenorclefVar, onvalue = 1, offvalue = 0, height=1)
-drawtenorclefCheckBox.grid(row=rowvar, column=1, sticky=W)
+drawtenorclefCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 drawbassclefVar = IntVar(value=1)
 drawbassclefCheckBox = Checkbutton(drawclefsframe, text = "Bass", variable = drawbassclefVar, onvalue = 1, offvalue = 0, height=1)
-drawbassclefCheckBox.grid(row=rowvar, column=1, sticky=W)
+drawbassclefCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
+
+### ident/write notes frame
+identwritenotesframe = ttk.LabelFrame(basicstab, text='Identify/Write Notes', relief=GROOVE, borderwidth=2)
+identwritenotesframe.grid(row=0, column=2, sticky=(W, E, N), padx=xpadding, pady=ypadding)
+rowvar = 0
+
+# ident notes
+identnotesVar = IntVar(value=0)
+identnotesCheckBox = Checkbutton(identwritenotesframe, text = "Identify Notes", variable = identnotesVar, onvalue = 1, offvalue = 0, height=1)
+identnotesCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+identnotesclefselectionLabel = Label(identwritenotesframe, text="Clefs:")
+identnotesclefselectionLabel.grid(row=rowvar, column=0, padx=xpadding, pady=ypadding)
+rowvar = rowvar + 1
+
+
+identnotestrebleVar = IntVar(value=1)
+identnotestrebleCheckBox = Checkbutton(identwritenotesframe, text = "Treble Clef", variable = identnotestrebleVar, onvalue = 1, offvalue = 0, height=1)
+identnotestrebleCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+identnotesbassVar = IntVar(value=1)
+identnotesbassCheckBox = Checkbutton(identwritenotesframe, text = "Bass Clef", variable = identnotesbassVar, onvalue = 1, offvalue = 0, height=1)
+identnotesbassCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+identnotesaltoVar = IntVar(value=1)
+identnotesaltoCheckBox = Checkbutton(identwritenotesframe, text = "Alto Clef", variable = identnotesaltoVar, onvalue = 1, offvalue = 0, height=1)
+identnotesaltoCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+identnotestenorVar = IntVar(value=1)
+identnotestenorCheckBox = Checkbutton(identwritenotesframe, text = "Tenor Clef", variable = identnotestenorVar, onvalue = 1, offvalue = 0, height=1)
+identnotestenorCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+# write notes
+rowvar = 0
+writenotesVar = IntVar(value=0)
+writenotesCheckBox = Checkbutton(identwritenotesframe, text = "Write Notes", variable = writenotesVar, onvalue = 1, offvalue = 0, height=1)
+writenotesCheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+writenotesclefselectionLabel = Label(identwritenotesframe, text="Clefs:")
+writenotesclefselectionLabel.grid(row=rowvar, column=1, padx=xpadding, pady=ypadding)
+rowvar = rowvar + 1
+
+writenotestrebleVar = IntVar(value=1)
+writenotestrebleCheckBox = Checkbutton(identwritenotesframe, text = "Treble Clef", variable = writenotestrebleVar, onvalue = 1, offvalue = 0, height=1)
+writenotestrebleCheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+writenotesbassVar = IntVar(value=1)
+writenotesbassCheckBox = Checkbutton(identwritenotesframe, text = "Bass Clef", variable = writenotesbassVar, onvalue = 1, offvalue = 0, height=1)
+writenotesbassCheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+writenotesaltoVar = IntVar(value=1)
+writenotesaltoCheckBox = Checkbutton(identwritenotesframe, text = "Alto Clef", variable = writenotesaltoVar, onvalue = 1, offvalue = 0, height=1)
+writenotesaltoCheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+writenotestenorVar = IntVar(value=1)
+writenotestenorCheckBox = Checkbutton(identwritenotesframe, text = "Tenor Clef", variable = writenotestenorVar, onvalue = 1, offvalue = 0, height=1)
+writenotestenorCheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
+
+
+
 
 ###################################################
 # Scales tab widgets
@@ -649,6 +720,7 @@ bassVar.set("8")
 bassBox = Spinbox(clefsframe, from_=0, to=100, width=3, textvariable=bassVar)
 bassBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
+
 
 ####### program settings frame #######
 progframe = ttk.LabelFrame(settingstab, text='Program Settings', relief=GROOVE, borderwidth=2)
