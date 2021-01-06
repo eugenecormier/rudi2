@@ -3,7 +3,7 @@ header = """%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \markup {{ {boldfont} {{ Aural Intervals }}}}
 \markup {{ {font} {{ {masterloop} }}}}
-
+\markup \\null 
 """
 columnstart = """\left-column {{ """
 

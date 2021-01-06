@@ -14,6 +14,7 @@ import random
 # my data files
 import headers
 import auralintervalsdata
+import drawclefsdata
 
 import footers
 
@@ -28,6 +29,8 @@ defaultfolder = path.expanduser('~')
 ###################################################
 # Definitions
 ###################################################
+
+
 ### CONFIG FILE STUFF ###
 def initconfigfile():
     global defaultfolder
@@ -97,6 +100,7 @@ def createButton():
     docfont,docboldfont = initcustomfonts()
     worksheetfile,keysheetfile = start_ly_file(docfont,docboldfont)
     auralintervals(worksheetfile,keysheetfile,docfont,docboldfont)
+    drawclefs(worksheetfile,keysheetfile,docfont,docboldfont)
     endfile(worksheetfile,keysheetfile)
 #######################################################
 
@@ -207,7 +211,6 @@ def auralintervals(worksheetfile,keysheetfile,docfont,docboldfont):
         # create the questions variable
         for i in range(10):
             if i in range(int(auralintervalsnumberVar.get())):
-                print(i +1)
                 worksheetdata += str(auralintervalsdata.columnstart.format())
                 keydata += str(auralintervalsdata.columnstart.format())
                 count = i + 1
@@ -221,6 +224,58 @@ def auralintervals(worksheetfile,keysheetfile,docfont,docboldfont):
         # write out results
         worksheetfile.writelines(auralintervalsdata.header.format(font=docfont,boldfont=docboldfont,masterloop=worksheetdata))
         keysheetfile.writelines(auralintervalsdata.header.format(font=docfont,boldfont=docboldfont,masterloop=keydata))
+
+def drawclefs(worksheetfile,keysheetfile,docfont,docboldfont):
+    if drawclefsVar.get() == 1:
+        worksheetfile.writelines(drawclefsdata.header.format(boldfont=docboldfont))
+        keysheetfile.writelines(drawclefsdata.header.format(boldfont=docboldfont))
+
+        # set up clef list variable
+        cleflist = []
+        if drawtrebleclefVar.get() == 1:
+            cleflist.append('treble')
+        if drawbassclefVar.get() == 1:
+            cleflist.append('bass')
+        if drawaltoclefVar.get() == 1:
+            cleflist.append('alto')
+        if drawtenorclefVar.get() == 1:
+            cleflist.append('tenor')
+        print(len(cleflist))
+
+        if len(cleflist) == 1:
+            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef=''))
+            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[0],forceclef='',startstaff=''))
+            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef='\set Staff.forceClef = ##t'))
+            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[0],forceclef='',startstaff=''))
+        if len(cleflist) == 2:
+            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef=''))
+            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[1],forceclef='',startstaff='\startStaff'))
+            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef='\set Staff.forceClef = ##t'))
+            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[1],forceclef='\set Staff.forceClef = ##t',startstaff='\startStaff'))
+        if len(cleflist) == 3:
+            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef=''))
+            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[1],forceclef='',startstaff='\startStaff'))
+            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef='\set Staff.forceClef = ##t'))
+            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[1],forceclef='\set Staff.forceClef = ##t',startstaff='\startStaff'))
+            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[2],forceclef=''))
+            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[2],forceclef='',startstaff=''))
+            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[2],forceclef='\set Staff.forceClef = ##t'))
+            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[2],forceclef='',startstaff=''))
+        if len(cleflist) == 4:
+            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef=''))
+            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[1],forceclef='',startstaff='\startStaff'))
+            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef='\set Staff.forceClef = ##t'))
+            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[1],forceclef='\set Staff.forceClef = ##t',startstaff='\startStaff'))
+            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[2],forceclef=''))
+            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[3],forceclef='',startstaff='\startStaff'))
+            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[2],forceclef='\set Staff.forceClef = ##t'))
+            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[3],forceclef='\set Staff.forceClef = ##t',startstaff='\startStaff'))
+
+
+
+
+
+
 
 
 
@@ -294,7 +349,7 @@ tab_parent = ttk.Notebook(mainframe, padding="2 5 2 5")
 tab_parent.grid(row=0, column=0, sticky=(N, W, E))
 # these are the tabs
 starttab = ttk.Frame(tab_parent)
-auralintervalstab = ttk.Frame(tab_parent)
+basicstab = ttk.Frame(tab_parent)
 scalestab = ttk.Frame(tab_parent)
 intervalstab = ttk.Frame(tab_parent)
 chordstab = ttk.Frame(tab_parent)
@@ -303,7 +358,7 @@ settingstab = ttk.Frame(tab_parent)
 settingstab.grid(column=0, row=0, sticky=(W, E))
 # add the previous tabs to the window with titles
 tab_parent.add(starttab, text="Start")
-tab_parent.add(auralintervalstab, text="Aural Intervals")
+tab_parent.add(basicstab, text="Basics")
 tab_parent.add(scalestab, text="Scales")
 tab_parent.add(intervalstab, text="Intervals")
 tab_parent.add(chordstab, text="Chords")
@@ -348,11 +403,11 @@ copyrightEntry.grid(row=rowvar, column=1, padx=xpadding, pady=ypadding)
 rowvar = rowvar + 1
 
 ###################################################
-# auralintervals tab widgets
+# basics tab widgets
 ###################################################
-# auralintervals frame
+### auralintervals frame
 framerow = 0
-auralintervalsframe = ttk.LabelFrame(auralintervalstab, text='Aural Intervals', relief=GROOVE, borderwidth=2)
+auralintervalsframe = ttk.LabelFrame(basicstab, text='Aural Intervals', relief=GROOVE, borderwidth=2)
 auralintervalsframe.grid(row=framerow, column=0, sticky=(W, E, N), padx=xpadding, pady=ypadding)
 framerow = framerow + 1
 rowvar = 0
@@ -440,16 +495,38 @@ P8CheckBox = Checkbutton(auralintervalsframe, text = "P8", variable = P8Var, onv
 P8CheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
+###################################################
+### Draw Clefs frame
+framerow = 0
+drawclefsframe = ttk.LabelFrame(basicstab, text='Clefs', relief=GROOVE, borderwidth=2)
+drawclefsframe.grid(row=framerow, column=1, sticky=(W, E, N), padx=xpadding, pady=ypadding)
+framerow = framerow + 1
+rowvar = 0
 
+drawclefsVar = IntVar(value=0)
+drawclefsCheckBox = Checkbutton(drawclefsframe, text = "Draw Clefs", variable = drawclefsVar, onvalue = 1, offvalue = 0, height=1)
+drawclefsCheckBox.grid(row=rowvar, column=0, sticky=W)
 
+# clef selection
+drawtrebleclefVar = IntVar(value=1)
+drawtrebleclefCheckBox = Checkbutton(drawclefsframe, text = "Treble", variable = drawtrebleclefVar, onvalue = 1, offvalue = 0, height=1)
+drawtrebleclefCheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
 
+drawaltoclefVar = IntVar(value=1)
+drawaltoclefCheckBox = Checkbutton(drawclefsframe, text = "Alto", variable = drawaltoclefVar, onvalue = 1, offvalue = 0, height=1)
+drawaltoclefCheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
 
+drawtenorclefVar = IntVar(value=1)
+drawtenorclefCheckBox = Checkbutton(drawclefsframe, text = "Tenor", variable = drawtenorclefVar, onvalue = 1, offvalue = 0, height=1)
+drawtenorclefCheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
 
-
-
-
-
-
+drawbassclefVar = IntVar(value=1)
+drawbassclefCheckBox = Checkbutton(drawclefsframe, text = "Bass", variable = drawbassclefVar, onvalue = 1, offvalue = 0, height=1)
+drawbassclefCheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
 
 ###################################################
 # Scales tab widgets

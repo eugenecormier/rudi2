@@ -21,7 +21,7 @@ indent = 0
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BAKED IN LILYPOND FUNCTIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-notimesig = {{ \override Staff.TimeSignature #'transparent = ##t }}
+notimesig = {{ \omit Staff.TimeSignature }}
 nobarline = {{ \override Staff.BarLine #'transparent = ##t }}
 nobarlinenumbers = {{ \override Score.BarNumber #'transparent = ##t }}
 noclef = {{ \override Staff.Clef #'transparent = ##t }}
