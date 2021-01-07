@@ -104,6 +104,7 @@ def createButton():
     endfile(worksheetfile,keysheetfile)
 #######################################################
 
+# definitions
 def initcustomfonts():
     if fontEntry.get() != '':
         return '\override #\'(font-name . "' + fontEntry.get() + '")','\override #\'(font-name . "' + fontEntry.get() + ' Bold") '
@@ -291,6 +292,37 @@ def selectsavefolder():
     defaultfolder = filedialog.askdirectory(initialdir=defaultfolder)
     defaultworkingfolderButton.config(text=defaultfolder)
 
+
+# enable widgets function
+def enableWidgets(checkbox,widgets):
+    if checkbox.get():
+        for i in widgets:
+            i.config(state=NORMAL)
+    else:
+        for i in widgets:
+            i.config(state=DISABLED)
+
+def enableauralintervalswidgets():
+    enableWidgets(auralintervalsVar,[PPCheckBox,m2CheckBox,M2CheckBox,m3CheckBox,M3CheckBox,P4CheckBox,TTCheckBox,P5CheckBox,m6CheckBox,M6CheckBox,m7CheckBox,M7CheckBox,P8CheckBox])
+
+def enabledrawclefswidgets():
+    enableWidgets(drawclefsVar,[drawtrebleclefCheckBox,drawbassclefCheckBox,drawaltoclefCheckBox,drawtenorclefCheckBox])
+
+def enableidentnoteswidgets():
+    enableWidgets(identnotesVar,[identnotestrebleCheckBox,identnotesbassCheckBox,identnotesaltoCheckBox,identnotestenorCheckBox])
+
+def enablewritenoteswidgets():
+    enableWidgets(writenotesVar,[writenotestrebleCheckBox,writenotesbassCheckBox,writenotesaltoCheckBox,writenotestenorCheckBox])
+
+
+
+
+
+
+
+
+
+
 ###################################################
 ###################################################
 
@@ -412,8 +444,9 @@ rowvar = 0
 
 # intervals selection
 auralintervalsVar = IntVar(value=0)
-auralintervalsCheckBox = Checkbutton(auralintervalsframe, text = "Interval fill in boxes", variable = auralintervalsVar, onvalue = 1, offvalue = 0, height=1)
+auralintervalsCheckBox = Checkbutton(auralintervalsframe, text = "Interval fill in boxes", variable = auralintervalsVar, onvalue = 1, offvalue = 0, height=1, command=enableauralintervalswidgets)
 auralintervalsCheckBox.grid(row=rowvar, column=0, sticky=W)
+
 # intervals number of questions
 auralintervalsnumberVar = StringVar()
 auralintervalsnumberVar.set("10")
@@ -427,69 +460,69 @@ intervalTypeLabel.grid(row=rowvar, column=0, padx=xpadding, pady=ypadding)
 rowvar = rowvar + 1
 
 PPVar = IntVar(value=1)
-PPCheckBox = Checkbutton(auralintervalsframe, text = "PP", variable = PPVar, onvalue = 1, offvalue = 0, height=1)
+PPCheckBox = Checkbutton(auralintervalsframe, text = "PP", variable = PPVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 PPCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 m2Var = IntVar(value=1)
-m2CheckBox = Checkbutton(auralintervalsframe, text = "m2", variable = m2Var, onvalue = 1, offvalue = 0, height=1)
+m2CheckBox = Checkbutton(auralintervalsframe, text = "m2", variable = m2Var, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 m2CheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 M2Var = IntVar(value=1)
-M2CheckBox = Checkbutton(auralintervalsframe, text = "M2", variable = M2Var, onvalue = 1, offvalue = 0, height=1)
+M2CheckBox = Checkbutton(auralintervalsframe, text = "M2", variable = M2Var, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 M2CheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 m3Var = IntVar(value=1)
-m3CheckBox = Checkbutton(auralintervalsframe, text = "m3", variable = m3Var, onvalue = 1, offvalue = 0, height=1)
+m3CheckBox = Checkbutton(auralintervalsframe, text = "m3", variable = m3Var, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 m3CheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 M3Var = IntVar(value=1)
-M3CheckBox = Checkbutton(auralintervalsframe, text = "M3", variable = M3Var, onvalue = 1, offvalue = 0, height=1)
+M3CheckBox = Checkbutton(auralintervalsframe, text = "M3", variable = M3Var, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 M3CheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 P4Var = IntVar(value=1)
-P4CheckBox = Checkbutton(auralintervalsframe, text = "P4", variable = P4Var, onvalue = 1, offvalue = 0, height=1)
+P4CheckBox = Checkbutton(auralintervalsframe, text = "P4", variable = P4Var, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 P4CheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 TTVar = IntVar(value=1)
-TTCheckBox = Checkbutton(auralintervalsframe, text = "TT", variable = TTVar, onvalue = 1, offvalue = 0, height=1)
+TTCheckBox = Checkbutton(auralintervalsframe, text = "TT", variable = TTVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 TTCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 # column split
 rowvar = 2
 P5Var = IntVar(value=1)
-P5CheckBox = Checkbutton(auralintervalsframe, text = "P5", variable = P5Var, onvalue = 1, offvalue = 0, height=1)
+P5CheckBox = Checkbutton(auralintervalsframe, text = "P5", variable = P5Var, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 P5CheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
 m6Var = IntVar(value=1)
-m6CheckBox = Checkbutton(auralintervalsframe, text = "m6", variable = m6Var, onvalue = 1, offvalue = 0, height=1)
+m6CheckBox = Checkbutton(auralintervalsframe, text = "m6", variable = m6Var, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 m6CheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
 M6Var = IntVar(value=1)
-M6CheckBox = Checkbutton(auralintervalsframe, text = "M6", variable = M6Var, onvalue = 1, offvalue = 0, height=1)
+M6CheckBox = Checkbutton(auralintervalsframe, text = "M6", variable = M6Var, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 M6CheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
 m7Var = IntVar(value=1)
-m7CheckBox = Checkbutton(auralintervalsframe, text = "m7", variable = m7Var, onvalue = 1, offvalue = 0, height=1)
+m7CheckBox = Checkbutton(auralintervalsframe, text = "m7", variable = m7Var, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 m7CheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
 M7Var = IntVar(value=1)
-M7CheckBox = Checkbutton(auralintervalsframe, text = "M7", variable = M7Var, onvalue = 1, offvalue = 0, height=1)
+M7CheckBox = Checkbutton(auralintervalsframe, text = "M7", variable = M7Var, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 M7CheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
 P8Var = IntVar(value=1)
-P8CheckBox = Checkbutton(auralintervalsframe, text = "P8", variable = P8Var, onvalue = 1, offvalue = 0, height=1)
+P8CheckBox = Checkbutton(auralintervalsframe, text = "P8", variable = P8Var, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 P8CheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
@@ -500,7 +533,7 @@ drawclefsframe.grid(row=0, column=1, sticky=(W, E, N), padx=xpadding, pady=ypadd
 rowvar = 0
 
 drawclefsVar = IntVar(value=0)
-drawclefsCheckBox = Checkbutton(drawclefsframe, text = "Draw Clefs", variable = drawclefsVar, onvalue = 1, offvalue = 0, height=1)
+drawclefsCheckBox = Checkbutton(drawclefsframe, text = "Draw Clefs", variable = drawclefsVar, onvalue = 1, offvalue = 0, height=1, command=enabledrawclefswidgets)
 drawclefsCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
@@ -510,22 +543,22 @@ drawclefsclefselectionLabel.grid(row=rowvar, column=0, padx=xpadding, pady=ypadd
 rowvar = rowvar + 1
 
 drawtrebleclefVar = IntVar(value=1)
-drawtrebleclefCheckBox = Checkbutton(drawclefsframe, text = "Treble", variable = drawtrebleclefVar, onvalue = 1, offvalue = 0, height=1)
+drawtrebleclefCheckBox = Checkbutton(drawclefsframe, text = "Treble", variable = drawtrebleclefVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 drawtrebleclefCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 drawaltoclefVar = IntVar(value=1)
-drawaltoclefCheckBox = Checkbutton(drawclefsframe, text = "Alto", variable = drawaltoclefVar, onvalue = 1, offvalue = 0, height=1)
+drawaltoclefCheckBox = Checkbutton(drawclefsframe, text = "Alto", variable = drawaltoclefVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 drawaltoclefCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 drawtenorclefVar = IntVar(value=1)
-drawtenorclefCheckBox = Checkbutton(drawclefsframe, text = "Tenor", variable = drawtenorclefVar, onvalue = 1, offvalue = 0, height=1)
+drawtenorclefCheckBox = Checkbutton(drawclefsframe, text = "Tenor", variable = drawtenorclefVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 drawtenorclefCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 drawbassclefVar = IntVar(value=1)
-drawbassclefCheckBox = Checkbutton(drawclefsframe, text = "Bass", variable = drawbassclefVar, onvalue = 1, offvalue = 0, height=1)
+drawbassclefCheckBox = Checkbutton(drawclefsframe, text = "Bass", variable = drawbassclefVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 drawbassclefCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
@@ -534,9 +567,14 @@ identwritenotesframe = ttk.LabelFrame(basicstab, text='Identify/Write Notes', re
 identwritenotesframe.grid(row=0, column=2, sticky=(W, E, N), padx=xpadding, pady=ypadding)
 rowvar = 0
 
+ledgerLinesVar = IntVar(value=0)
+ledgerLinesCheckBox = Checkbutton(identwritenotesframe, text = "Ledger Lines", variable = ledgerLinesVar, onvalue = 1, offvalue = 0, height=1)
+ledgerLinesCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
 # ident notes
 identnotesVar = IntVar(value=0)
-identnotesCheckBox = Checkbutton(identwritenotesframe, text = "Identify Notes", variable = identnotesVar, onvalue = 1, offvalue = 0, height=1)
+identnotesCheckBox = Checkbutton(identwritenotesframe, text = "Identify Notes", variable = identnotesVar, onvalue = 1, offvalue = 0, height=1, command=enableidentnoteswidgets)
 identnotesCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
@@ -546,29 +584,31 @@ rowvar = rowvar + 1
 
 
 identnotestrebleVar = IntVar(value=1)
-identnotestrebleCheckBox = Checkbutton(identwritenotesframe, text = "Treble Clef", variable = identnotestrebleVar, onvalue = 1, offvalue = 0, height=1)
+identnotestrebleCheckBox = Checkbutton(identwritenotesframe, text = "Treble Clef", variable = identnotestrebleVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 identnotestrebleCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 identnotesbassVar = IntVar(value=1)
-identnotesbassCheckBox = Checkbutton(identwritenotesframe, text = "Bass Clef", variable = identnotesbassVar, onvalue = 1, offvalue = 0, height=1)
+identnotesbassCheckBox = Checkbutton(identwritenotesframe, text = "Bass Clef", variable = identnotesbassVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 identnotesbassCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 identnotesaltoVar = IntVar(value=1)
-identnotesaltoCheckBox = Checkbutton(identwritenotesframe, text = "Alto Clef", variable = identnotesaltoVar, onvalue = 1, offvalue = 0, height=1)
+identnotesaltoCheckBox = Checkbutton(identwritenotesframe, text = "Alto Clef", variable = identnotesaltoVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 identnotesaltoCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 identnotestenorVar = IntVar(value=1)
-identnotestenorCheckBox = Checkbutton(identwritenotesframe, text = "Tenor Clef", variable = identnotestenorVar, onvalue = 1, offvalue = 0, height=1)
+identnotestenorCheckBox = Checkbutton(identwritenotesframe, text = "Tenor Clef", variable = identnotestenorVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 identnotestenorCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
+
+
 # write notes
-rowvar = 0
+rowvar = 1
 writenotesVar = IntVar(value=0)
-writenotesCheckBox = Checkbutton(identwritenotesframe, text = "Write Notes", variable = writenotesVar, onvalue = 1, offvalue = 0, height=1)
+writenotesCheckBox = Checkbutton(identwritenotesframe, text = "Write Notes", variable = writenotesVar, onvalue = 1, offvalue = 0, height=1, command=enablewritenoteswidgets)
 writenotesCheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
@@ -577,22 +617,22 @@ writenotesclefselectionLabel.grid(row=rowvar, column=1, padx=xpadding, pady=ypad
 rowvar = rowvar + 1
 
 writenotestrebleVar = IntVar(value=1)
-writenotestrebleCheckBox = Checkbutton(identwritenotesframe, text = "Treble Clef", variable = writenotestrebleVar, onvalue = 1, offvalue = 0, height=1)
+writenotestrebleCheckBox = Checkbutton(identwritenotesframe, text = "Treble Clef", variable = writenotestrebleVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 writenotestrebleCheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
 writenotesbassVar = IntVar(value=1)
-writenotesbassCheckBox = Checkbutton(identwritenotesframe, text = "Bass Clef", variable = writenotesbassVar, onvalue = 1, offvalue = 0, height=1)
+writenotesbassCheckBox = Checkbutton(identwritenotesframe, text = "Bass Clef", variable = writenotesbassVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 writenotesbassCheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
 writenotesaltoVar = IntVar(value=1)
-writenotesaltoCheckBox = Checkbutton(identwritenotesframe, text = "Alto Clef", variable = writenotesaltoVar, onvalue = 1, offvalue = 0, height=1)
+writenotesaltoCheckBox = Checkbutton(identwritenotesframe, text = "Alto Clef", variable = writenotesaltoVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 writenotesaltoCheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
 writenotestenorVar = IntVar(value=1)
-writenotestenorCheckBox = Checkbutton(identwritenotesframe, text = "Tenor Clef", variable = writenotestenorVar, onvalue = 1, offvalue = 0, height=1)
+writenotestenorCheckBox = Checkbutton(identwritenotesframe, text = "Tenor Clef", variable = writenotestenorVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 writenotestenorCheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
