@@ -8,6 +8,7 @@ from tkinter import ttk  # extended gui widgets
 from tkinter import filedialog  # for save folder
 import time  # for default filenames with date
 from os import path  # for working cross platform with files/folders
+from os import system # for running lilypond externally
 import configparser  # for working with settings files (.ini)
 import random
 
@@ -21,22 +22,21 @@ import footers
 ###################################################
 # Initial Variables
 ###################################################
-xpadding=20
-ypadding=8
+xpadding = 20
+ypadding = 8
 defaultfolder = path.expanduser('~')
 
-###################################################
+
 ###################################################
 # Definitions
 ###################################################
-
 
 ### CONFIG FILE STUFF ###
 def initconfigfile():
     global defaultfolder
     # if file does not exist, create it, populate it with defaults, and save it
     if not path.exists(path.join(path.dirname(path.realpath(__file__)), 'config.ini')):
-        configfile = open(path.join(path.dirname(path.realpath(__file__)), 'config.ini'),"w+")
+        configfile = open(path.join(path.dirname(path.realpath(__file__)), 'config.ini'), "w+")
         # config parser stuff
         config = configparser.ConfigParser()
         config['SETTINGS'] = {'DefaultSaveFolder': defaultfolder,
@@ -76,8 +76,9 @@ def initconfigfile():
         # update button text
         defaultworkingfolderButton.config(text=defaultfolder)
 
+
 def savesettings():
-    configfile = open(path.join(path.dirname(path.realpath(__file__)), 'config.ini'),"w")
+    configfile = open(path.join(path.dirname(path.realpath(__file__)), 'config.ini'), "w")
     config = configparser.ConfigParser()
     config['SETTINGS'] = {'DefaultSaveFolder': defaultfolder,
                           'DeleteTempFiles': deletefilesVar.get(),
@@ -96,20 +97,28 @@ def savesettings():
     configfile.close()
 
 # main program ########################################
+
+
 def createButton():
     docfont,docboldfont = initcustomfonts()
-    worksheetfile,keysheetfile = start_ly_file(docfont,docboldfont)
+    worksheetfile,keysheetfile, worksheetfilename, keysheetfilename = start_ly_file(docfont,docboldfont)
     auralintervals(worksheetfile,keysheetfile,docfont,docboldfont)
     drawclefs(worksheetfile,keysheetfile,docfont,docboldfont)
+    identwritenotes(worksheetfile,keysheetfile,docfont,docboldfont)
     endfile(worksheetfile,keysheetfile)
+    callLilypond(worksheetfilename,keysheetfilename)
+
 #######################################################
 
 # definitions
+
+
 def initcustomfonts():
     if fontEntry.get() != '':
-        return '\override #\'(font-name . "' + fontEntry.get() + '")','\override #\'(font-name . "' + fontEntry.get() + ' Bold") '
+        return '\override #\'(font-name . "' + fontEntry.get() + '")', '\override #\'(font-name . "' + fontEntry.get() + ' Bold") '
     else:
-        return '','\\bold'
+        return '', '\\bold'
+
 
 def start_ly_file(docfont,docboldfont):
     # setup filenames
@@ -117,8 +126,8 @@ def start_ly_file(docfont,docboldfont):
         worksheetfilename = path.join(defaultfolder, filenameEntry.get() + '-worksheet.ly')
         keysheetfilename = path.join(defaultfolder, filenameEntry.get() + '-keysheet.ly')
     else:
-        worksheetfilename = path.join(defaultfolder, 'theory-worksheet-' + time.strftime("%Y-%m-%d")  + '.ly')
-        keysheetfilename = path.join(defaultfolder, 'theory-keysheet-' + time.strftime("%Y-%m-%d")  + '.ly')
+        worksheetfilename = path.join(defaultfolder, 'theory-worksheet-' + time.strftime("%Y-%m-%d") + '.ly')
+        keysheetfilename = path.join(defaultfolder, 'theory-keysheet-' + time.strftime("%Y-%m-%d") + '.ly')
     # open files for writing
     worksheetfile = open(worksheetfilename, 'w')
     keysheetfile = open(keysheetfilename, 'w')
@@ -129,7 +138,7 @@ def start_ly_file(docfont,docboldfont):
     else:
         doctitle = 'Preliminary Rudiments Worksheet'
     # copyright
-    if copyrightEntry.get() !='':
+    if copyrightEntry.get() != '':
         doctag = copyrightEntry.get()
     else:
         doctag = 'Created by rudi v2.0'
@@ -158,21 +167,35 @@ def start_ly_file(docfont,docboldfont):
 
 
     # write the header to file
-    worksheetfile.writelines(headers.lilypondheader.format(title=doctitle,font=docfont,boldfont=docboldfont,
-                                                           tag=doctag,keytitle='',
-                                                           raggedright=raggedrightvar,raggedbottom=raggedbottomvar,
+    worksheetfile.writelines(headers.lilypondheader.format(title=doctitle, font=docfont, boldfont=docboldfont,
+                                                           tag=doctag, keytitle='',
+                                                           raggedright=raggedrightvar, raggedbottom=raggedbottomvar,
                                                            raggedlastbottom=raggedlastbottomvar,
-                                                           papersize=papersizeVar.get().lower(),orientation=orientationvar,
+                                                           papersize=papersizeVar.get().lower(), orientation=orientationvar,
                                                            scaling=scalingVar.get()))
-    keysheetfile.writelines(headers.lilypondheader.format(title=doctitle,font=docfont,boldfont=docboldfont,
-                                                          tag=doctag,keytitle='\with-color #red Key',
-                                                          raggedright=raggedrightvar,raggedbottom=raggedbottomvar,
+    keysheetfile.writelines(headers.lilypondheader.format(title=doctitle, font=docfont, boldfont=docboldfont,
+                                                          tag=doctag, keytitle='\with-color #red Key',
+                                                          raggedright=raggedrightvar, raggedbottom=raggedbottomvar,
                                                           raggedlastbottom=raggedlastbottomvar,
-                                                          papersize=papersizeVar.get().lower(),orientation=orientationvar,
+                                                          papersize=papersizeVar.get().lower(), orientation=orientationvar,
                                                           scaling=scalingVar.get()))
 
     # return the sheet filenames for subsequent writes
-    return worksheetfile,keysheetfile
+    return worksheetfile, keysheetfile, worksheetfilename, keysheetfilename
+
+
+def listifyClefs(treble, alto, tenor, bass):
+    cleflist = []
+    if treble.get() == 1:
+        cleflist.append('treble')
+    if alto.get() == 1:
+        cleflist.append('alto')
+    if tenor.get() == 1:
+        cleflist.append('tenor')
+    if bass.get() == 1:
+        cleflist.append('bass')
+    return cleflist
+
 
 def auralintervals(worksheetfile,keysheetfile,docfont,docboldfont):
     if auralintervalsVar.get() == 1:
@@ -216,62 +239,57 @@ def auralintervals(worksheetfile,keysheetfile,docfont,docboldfont):
                 keydata += str(auralintervalsdata.columnstart.format())
                 count = i + 1
                 while count - 1 in range(int(auralintervalsnumberVar.get())):
-                    worksheetdata += str(auralintervalsdata.loop.format(number=count,answer='\hspace # 4'))
-                    keydata += str(auralintervalsdata.loop.format(number=count,answer='\with-color #red ' + random.choice(intervals)))
+                    worksheetdata += str(auralintervalsdata.loop.format(number=count, answer='\hspace # 4'))
+                    keydata += str(auralintervalsdata.loop.format(number=count, answer='\with-color #red ' + random.choice(intervals)))
                     count += 10
                 worksheetdata += ' } '
                 keydata += ' } '
 
         # write out results
-        worksheetfile.writelines(auralintervalsdata.header.format(font=docfont,boldfont=docboldfont,masterloop=worksheetdata))
-        keysheetfile.writelines(auralintervalsdata.header.format(font=docfont,boldfont=docboldfont,masterloop=keydata))
+        worksheetfile.writelines(auralintervalsdata.header.format(font=docfont, boldfont=docboldfont, masterloop=worksheetdata))
+        keysheetfile.writelines(auralintervalsdata.header.format(font=docfont, boldfont=docboldfont, masterloop=keydata))
 
 def drawclefs(worksheetfile,keysheetfile,docfont,docboldfont):
     if drawclefsVar.get() == 1:
-        worksheetfile.writelines(drawclefsdata.header.format(boldfont=docboldfont))
-        keysheetfile.writelines(drawclefsdata.header.format(boldfont=docboldfont))
+        worksheetfile.writelines(drawclefsdata.header.format(font=docfont, boldfont=docboldfont, number=drawclefsnumberVar.get()))
+        keysheetfile.writelines(drawclefsdata.header.format(font=docfont, boldfont=docboldfont, number=drawclefsnumberVar.get()))
 
         # set up clef list variable
-        cleflist = []
-        if drawtrebleclefVar.get() == 1:
-            cleflist.append('treble')
-        if drawbassclefVar.get() == 1:
-            cleflist.append('bass')
-        if drawaltoclefVar.get() == 1:
-            cleflist.append('alto')
-        if drawtenorclefVar.get() == 1:
-            cleflist.append('tenor')
-        print(len(cleflist))
+        cleflist = listifyClefs(drawcleftrebleVar, drawclefaltoVar, drawcleftenorVar, drawclefbassVar)
 
         if len(cleflist) == 1:
-            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef=''))
-            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[0],forceclef='',startstaff=''))
-            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef='\set Staff.forceClef = ##t'))
-            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[0],forceclef='',startstaff=''))
-        if len(cleflist) == 2:
-            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef=''))
-            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[1],forceclef='',startstaff='\startStaff'))
-            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef='\set Staff.forceClef = ##t'))
-            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[1],forceclef='\set Staff.forceClef = ##t',startstaff='\startStaff'))
+            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0], key='\once \override Staff.Clef.transparent = ##t'))
+            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[0], startstaff='', key='\once \override Staff.Clef.transparent = ##t', hideclef='\once \override Staff.Clef.transparent = ##t'))
+            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0], key=''))
+            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[0], startstaff='', key='\once \override Staff.Clef.transparent = ##t', hideclef='\once \override Staff.Clef.transparent = ##t'))
+        if len(cleflist) >= 2:
+            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0], key='\once \override Staff.Clef.transparent = ##t'))
+            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[1], startstaff='\startStaff', key='\once \override Staff.Clef.transparent = ##t', hideclef=''))
+            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0], key=''))
+            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[1], startstaff='\startStaff', key='', hideclef=''))
         if len(cleflist) == 3:
-            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef=''))
-            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[1],forceclef='',startstaff='\startStaff'))
-            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef='\set Staff.forceClef = ##t'))
-            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[1],forceclef='\set Staff.forceClef = ##t',startstaff='\startStaff'))
-            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[2],forceclef=''))
-            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[2],forceclef='',startstaff=''))
-            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[2],forceclef='\set Staff.forceClef = ##t'))
-            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[2],forceclef='',startstaff=''))
+            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[2], key='\once \override Staff.Clef.transparent = ##t'))
+            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[2], startstaff='', key='\once \override Staff.Clef.transparent = ##t', hideclef='\once \override Staff.Clef.transparent = ##t'))
+            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[2], key=''))
+            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[2], startstaff='', key='\once \override Staff.Clef.transparent = ##t', hideclef='\once \override Staff.Clef.transparent = ##t'))
         if len(cleflist) == 4:
-            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef=''))
-            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[1],forceclef='',startstaff='\startStaff'))
-            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[0],forceclef='\set Staff.forceClef = ##t'))
-            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[1],forceclef='\set Staff.forceClef = ##t',startstaff='\startStaff'))
-            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[2],forceclef=''))
-            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[3],forceclef='',startstaff='\startStaff'))
-            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[2],forceclef='\set Staff.forceClef = ##t'))
-            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[3],forceclef='\set Staff.forceClef = ##t',startstaff='\startStaff'))
+            worksheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[2], key='\once \override Staff.Clef.transparent = ##t'))
+            worksheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[3], startstaff='\startStaff', key='\once \override Staff.Clef.transparent = ##t', hideclef=''))
+            keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[2], key=''))
+            keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[3], startstaff='\startStaff', key='', hideclef=''))
 
+
+def identwritenotes(worksheetfile,keysheetfile,docfont,docboldfont):
+    # identify notes
+    if identnotesVar.get() == 1:
+        print('identify notes on')
+        cleflist = listifyClefs(identnotestrebleVar,identnotesaltoVar,identnotestenorVar, identnotesbassVar)
+        print(cleflist)
+    # write notes
+    if writenotesVar.get() == 1:
+        print('write notes on')
+        cleflist = listifyClefs(writenotestrebleVar,writenotesaltoVar,writenotestenorVar,writenotesbassVar)
+        print(cleflist)
 
 
 
@@ -303,17 +321,21 @@ def enableWidgets(checkbox,widgets):
             i.config(state=DISABLED)
 
 def enableauralintervalswidgets():
-    enableWidgets(auralintervalsVar,[PPCheckBox,m2CheckBox,M2CheckBox,m3CheckBox,M3CheckBox,P4CheckBox,TTCheckBox,P5CheckBox,m6CheckBox,M6CheckBox,m7CheckBox,M7CheckBox,P8CheckBox])
+    enableWidgets(auralintervalsVar, [PPCheckBox, m2CheckBox, M2CheckBox, m3CheckBox, M3CheckBox, P4CheckBox, TTCheckBox, P5CheckBox, m6CheckBox, M6CheckBox, m7CheckBox, M7CheckBox, P8CheckBox])
 
 def enabledrawclefswidgets():
-    enableWidgets(drawclefsVar,[drawtrebleclefCheckBox,drawbassclefCheckBox,drawaltoclefCheckBox,drawtenorclefCheckBox])
+    enableWidgets(drawclefsVar, [drawcleftrebleCheckBox, drawclefbassCheckBox, drawclefaltoCheckBox, drawcleftenorCheckBox])
 
 def enableidentnoteswidgets():
-    enableWidgets(identnotesVar,[identnotestrebleCheckBox,identnotesbassCheckBox,identnotesaltoCheckBox,identnotestenorCheckBox])
+    enableWidgets(identnotesVar, [identnotestrebleCheckBox, identnotesbassCheckBox, identnotesaltoCheckBox, identnotestenorCheckBox, ledgerLinesCheckBox, ledgerlinepercentLabel, ledgerlinepercentBox])
 
 def enablewritenoteswidgets():
-    enableWidgets(writenotesVar,[writenotestrebleCheckBox,writenotesbassCheckBox,writenotesaltoCheckBox,writenotestenorCheckBox])
+    enableWidgets(writenotesVar, [writenotestrebleCheckBox, writenotesbassCheckBox, writenotesaltoCheckBox, writenotestenorCheckBox, ledgerLinesCheckBox, ledgerlinepercentLabel, ledgerlinepercentBox])
 
+
+def callLilypond(worksheet,key):
+    system('cd ' + path.dirname(worksheet) + ' && lilypond ' + path.basename(worksheet))
+    system('cd ' + path.dirname(key) + ' && lilypond ' + path.basename(key))
 
 
 
@@ -437,7 +459,9 @@ rowvar = rowvar + 1
 ###################################################
 # basics tab widgets
 ###################################################
-### auralintervals frame
+
+###################################################
+# auralintervals frame
 auralintervalsframe = ttk.LabelFrame(basicstab, text='Aural Intervals', relief=GROOVE, borderwidth=2)
 auralintervalsframe.grid(row=0, column=0, sticky=(W, E, N), padx=xpadding, pady=ypadding)
 rowvar = 0
@@ -526,6 +550,7 @@ P8CheckBox = Checkbutton(auralintervalsframe, text = "P8", variable = P8Var, onv
 P8CheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
+
 ###################################################
 ### Draw Clefs frame
 drawclefsframe = ttk.LabelFrame(basicstab, text='Clefs', relief=GROOVE, borderwidth=2)
@@ -535,6 +560,12 @@ rowvar = 0
 drawclefsVar = IntVar(value=0)
 drawclefsCheckBox = Checkbutton(drawclefsframe, text = "Draw Clefs", variable = drawclefsVar, onvalue = 1, offvalue = 0, height=1, command=enabledrawclefswidgets)
 drawclefsCheckBox.grid(row=rowvar, column=0, sticky=W)
+
+# number of questions
+drawclefsnumberVar = StringVar()
+drawclefsnumberVar.set("5")
+drawclefsnumberBox = Spinbox(drawclefsframe, from_=0, to=100, width=3, textvariable=drawclefsnumberVar)
+drawclefsnumberBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
 # clef selection
@@ -542,74 +573,96 @@ drawclefsclefselectionLabel = Label(drawclefsframe, text="Clefs:")
 drawclefsclefselectionLabel.grid(row=rowvar, column=0, padx=xpadding, pady=ypadding)
 rowvar = rowvar + 1
 
-drawtrebleclefVar = IntVar(value=1)
-drawtrebleclefCheckBox = Checkbutton(drawclefsframe, text = "Treble", variable = drawtrebleclefVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
-drawtrebleclefCheckBox.grid(row=rowvar, column=0, sticky=W)
+drawcleftrebleVar = IntVar(value=1)
+drawcleftrebleCheckBox = Checkbutton(drawclefsframe, text = "Treble", variable = drawcleftrebleVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
+drawcleftrebleCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
-drawaltoclefVar = IntVar(value=1)
-drawaltoclefCheckBox = Checkbutton(drawclefsframe, text = "Alto", variable = drawaltoclefVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
-drawaltoclefCheckBox.grid(row=rowvar, column=0, sticky=W)
+drawclefaltoVar = IntVar(value=1)
+drawclefaltoCheckBox = Checkbutton(drawclefsframe, text = "Alto", variable = drawclefaltoVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
+drawclefaltoCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
-drawtenorclefVar = IntVar(value=1)
-drawtenorclefCheckBox = Checkbutton(drawclefsframe, text = "Tenor", variable = drawtenorclefVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
-drawtenorclefCheckBox.grid(row=rowvar, column=0, sticky=W)
+drawcleftenorVar = IntVar(value=1)
+drawcleftenorCheckBox = Checkbutton(drawclefsframe, text = "Tenor", variable = drawcleftenorVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
+drawcleftenorCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
-drawbassclefVar = IntVar(value=1)
-drawbassclefCheckBox = Checkbutton(drawclefsframe, text = "Bass", variable = drawbassclefVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
-drawbassclefCheckBox.grid(row=rowvar, column=0, sticky=W)
+drawclefbassVar = IntVar(value=1)
+drawclefbassCheckBox = Checkbutton(drawclefsframe, text = "Bass", variable = drawclefbassVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
+drawclefbassCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
+###################################################
 ### ident/write notes frame
 identwritenotesframe = ttk.LabelFrame(basicstab, text='Identify/Write Notes', relief=GROOVE, borderwidth=2)
 identwritenotesframe.grid(row=0, column=2, sticky=(W, E, N), padx=xpadding, pady=ypadding)
 rowvar = 0
 
-ledgerLinesVar = IntVar(value=0)
-ledgerLinesCheckBox = Checkbutton(identwritenotesframe, text = "Ledger Lines", variable = ledgerLinesVar, onvalue = 1, offvalue = 0, height=1)
-ledgerLinesCheckBox.grid(row=rowvar, column=0, sticky=W)
-rowvar = rowvar + 1
-
 # ident notes
 identnotesVar = IntVar(value=0)
 identnotesCheckBox = Checkbutton(identwritenotesframe, text = "Identify Notes", variable = identnotesVar, onvalue = 1, offvalue = 0, height=1, command=enableidentnoteswidgets)
 identnotesCheckBox.grid(row=rowvar, column=0, sticky=W)
+
+# number of questions
+identnotesnumberVar = StringVar()
+identnotesnumberVar.set("10")
+identnotesnumberBox = Spinbox(identwritenotesframe, from_=0, to=100, width=3, textvariable=identnotesnumberVar)
+identnotesnumberBox.grid(row=rowvar, column=0, sticky=E)
 rowvar = rowvar + 1
 
 identnotesclefselectionLabel = Label(identwritenotesframe, text="Clefs:")
 identnotesclefselectionLabel.grid(row=rowvar, column=0, padx=xpadding, pady=ypadding)
 rowvar = rowvar + 1
 
-
 identnotestrebleVar = IntVar(value=1)
-identnotestrebleCheckBox = Checkbutton(identwritenotesframe, text = "Treble Clef", variable = identnotestrebleVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
+identnotestrebleCheckBox = Checkbutton(identwritenotesframe, text = "Treble", variable = identnotestrebleVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 identnotestrebleCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
-identnotesbassVar = IntVar(value=1)
-identnotesbassCheckBox = Checkbutton(identwritenotesframe, text = "Bass Clef", variable = identnotesbassVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
-identnotesbassCheckBox.grid(row=rowvar, column=0, sticky=W)
-rowvar = rowvar + 1
-
 identnotesaltoVar = IntVar(value=1)
-identnotesaltoCheckBox = Checkbutton(identwritenotesframe, text = "Alto Clef", variable = identnotesaltoVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
+identnotesaltoCheckBox = Checkbutton(identwritenotesframe, text = "Alto", variable = identnotesaltoVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 identnotesaltoCheckBox.grid(row=rowvar, column=0, sticky=W)
 rowvar = rowvar + 1
 
 identnotestenorVar = IntVar(value=1)
-identnotestenorCheckBox = Checkbutton(identwritenotesframe, text = "Tenor Clef", variable = identnotestenorVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
+identnotestenorCheckBox = Checkbutton(identwritenotesframe, text = "Tenor", variable = identnotestenorVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 identnotestenorCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+identnotesbassVar = IntVar(value=1)
+identnotesbassCheckBox = Checkbutton(identwritenotesframe, text = "Bass", variable = identnotesbassVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
+identnotesbassCheckBox.grid(row=rowvar, column=0, sticky=W)
+rowvar = rowvar + 1
+
+# ledger lines settings
+ledgerLinesVar = IntVar(value=0)
+ledgerLinesCheckBox = Checkbutton(identwritenotesframe, text = "Ledger Lines", variable = ledgerLinesVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
+ledgerLinesCheckBox.grid(row=rowvar, column=0, sticky=W)
+
+# ledger line notes frequency
+ledgerlinepercentVar = StringVar()
+ledgerlinepercentVar.set("10")
+ledgerlinepercentBox = Spinbox(identwritenotesframe, from_=0, to=100, width=3, textvariable=ledgerlinepercentVar, state=DISABLED)
+ledgerlinepercentBox.grid(row=rowvar, column=1, sticky=W)
+# percent label
+ledgerlinepercentLabel = Label(identwritenotesframe, text="%", state=DISABLED)
+ledgerlinepercentLabel.grid(row=rowvar, column=1, padx=xpadding, pady=ypadding)
 rowvar = rowvar + 1
 
 
 
 # write notes
-rowvar = 1
+rowvar = 0
 writenotesVar = IntVar(value=0)
 writenotesCheckBox = Checkbutton(identwritenotesframe, text = "Write Notes", variable = writenotesVar, onvalue = 1, offvalue = 0, height=1, command=enablewritenoteswidgets)
 writenotesCheckBox.grid(row=rowvar, column=1, sticky=W)
+
+# number of questions
+writenotesnumberVar = StringVar()
+writenotesnumberVar.set("10")
+writenotesnumberBox = Spinbox(identwritenotesframe, from_=0, to=100, width=3, textvariable=writenotesnumberVar)
+writenotesnumberBox.grid(row=rowvar, column=1, sticky=E)
 rowvar = rowvar + 1
 
 writenotesclefselectionLabel = Label(identwritenotesframe, text="Clefs:")
@@ -617,27 +670,24 @@ writenotesclefselectionLabel.grid(row=rowvar, column=1, padx=xpadding, pady=ypad
 rowvar = rowvar + 1
 
 writenotestrebleVar = IntVar(value=1)
-writenotestrebleCheckBox = Checkbutton(identwritenotesframe, text = "Treble Clef", variable = writenotestrebleVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
+writenotestrebleCheckBox = Checkbutton(identwritenotesframe, text = "Treble", variable = writenotestrebleVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 writenotestrebleCheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
-writenotesbassVar = IntVar(value=1)
-writenotesbassCheckBox = Checkbutton(identwritenotesframe, text = "Bass Clef", variable = writenotesbassVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
-writenotesbassCheckBox.grid(row=rowvar, column=1, sticky=W)
-rowvar = rowvar + 1
-
 writenotesaltoVar = IntVar(value=1)
-writenotesaltoCheckBox = Checkbutton(identwritenotesframe, text = "Alto Clef", variable = writenotesaltoVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
+writenotesaltoCheckBox = Checkbutton(identwritenotesframe, text = "Alto", variable = writenotesaltoVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 writenotesaltoCheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
 writenotestenorVar = IntVar(value=1)
-writenotestenorCheckBox = Checkbutton(identwritenotesframe, text = "Tenor Clef", variable = writenotestenorVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
+writenotestenorCheckBox = Checkbutton(identwritenotesframe, text = "Tenor", variable = writenotestenorVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 writenotestenorCheckBox.grid(row=rowvar, column=1, sticky=W)
 rowvar = rowvar + 1
 
-
-
+writenotesbassVar = IntVar(value=1)
+writenotesbassCheckBox = Checkbutton(identwritenotesframe, text = "Bass", variable = writenotesbassVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
+writenotesbassCheckBox.grid(row=rowvar, column=1, sticky=W)
+rowvar = rowvar + 1
 
 ###################################################
 # Scales tab widgets

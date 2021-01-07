@@ -8,7 +8,3 @@ header = """%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 columnstart = """\left-column {{ """
 
 loop = """\line {{ {number}. {answer} }}"""
-
-
-#%\header {{
-#%\ttitle = \markup {{ {font} \\fontsize #+3 {{ {title} {keytitle} }}}}
