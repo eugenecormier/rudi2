@@ -280,7 +280,7 @@ def drawclefs(worksheetfile, keysheetfile, docfont, docboldfont):
             keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[2], key=''))
             keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[3], startstaff='\startStaff', key='', hideclef=''))
 
-def identWriteNotesPopulateList(notes, ledgernotes, key, ledgerkey):
+def identNotesPopulateList(notes, ledgernotes, key, ledgerkey):
     if ledgerLinesVar.get() == 1:
         noteslist = notes + ledgernotes
         keylist = key + ledgerkey
@@ -289,6 +289,9 @@ def identWriteNotesPopulateList(notes, ledgernotes, key, ledgerkey):
         keylist = key.copy()
     return noteslist, keylist
 
+def writeNotesPopulateList(notes, key):
+    return notes.copy(), key.copy()
+
 
 def identwritenotes(worksheetfile,keysheetfile,docfont,docboldfont):
     # headers
@@ -296,7 +299,8 @@ def identwritenotes(worksheetfile,keysheetfile,docfont,docboldfont):
         worksheetfile.writelines(identwritenotesdata.header.format(boldfont=docboldfont))
         keysheetfile.writelines(identwritenotesdata.header.format(boldfont=docboldfont))
     # variables setup
-    cleflist = listifyClefs(identnotestrebleVar, identnotesaltoVar, identnotestenorVar, identnotesbassVar)
+    identcleflist = listifyClefs(identnotestrebleVar, identnotesaltoVar, identnotestenorVar, identnotesbassVar)
+    writecleflist = listifyClefs(writenotestrebleVar, writenotesaltoVar, writenotestenorVar, writenotesbassVar)
     trebleNotes = []
     altoNotes = []
     tenorNotes = []
@@ -307,12 +311,12 @@ def identwritenotes(worksheetfile,keysheetfile,docfont,docboldfont):
         worksheetfile.writelines(identwritenotesdata.identText.format(font=docfont))
         keysheetfile.writelines(identwritenotesdata.identText.format(font=docfont))
         # TREBLE
-        if 'treble' in cleflist:
+        if 'treble' in identcleflist:
             worksheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='treble'))
             keysheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='treble'))
             for i in range(int(identnotesnumberVar.get())):
                 if len(trebleNotes) == 0:
-                    trebleNotes, trebleKey = identWriteNotesPopulateList(identwritenotesdata.trebleNotes, identwritenotesdata.trebleLedgerNotes, identwritenotesdata.trebleKey, identwritenotesdata.trebleLedgerKey)
+                    trebleNotes, trebleKey = identNotesPopulateList(identwritenotesdata.trebleNotes, identwritenotesdata.trebleLedgerNotes, identwritenotesdata.trebleKey, identwritenotesdata.trebleLedgerKey)
                 selection = random.choice(range(len(trebleNotes)))
                 note = trebleNotes.pop(selection)
                 key = trebleKey.pop(selection)
@@ -321,12 +325,12 @@ def identwritenotes(worksheetfile,keysheetfile,docfont,docboldfont):
             worksheetfile.writelines(identwritenotesdata.identSectionEnd)
             keysheetfile.writelines(identwritenotesdata.identSectionEnd)
         # ALTO
-        if 'alto' in cleflist:
+        if 'alto' in identcleflist:
             worksheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='alto'))
             keysheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='alto'))
             for i in range(int(identnotesnumberVar.get())):
                 if len(altoNotes) == 0:
-                    altoNotes, altoKey = identWriteNotesPopulateList(identwritenotesdata.altoNotes, identwritenotesdata.altoLedgerNotes, identwritenotesdata.altoKey, identwritenotesdata.altoLedgerKey)
+                    altoNotes, altoKey = identNotesPopulateList(identwritenotesdata.altoNotes, identwritenotesdata.altoLedgerNotes, identwritenotesdata.altoKey, identwritenotesdata.altoLedgerKey)
                 selection = random.choice(range(len(altoNotes)))
                 note = altoNotes.pop(selection)
                 key = altoKey.pop(selection)
@@ -335,12 +339,12 @@ def identwritenotes(worksheetfile,keysheetfile,docfont,docboldfont):
             worksheetfile.writelines(identwritenotesdata.identSectionEnd)
             keysheetfile.writelines(identwritenotesdata.identSectionEnd)
         # TENOR
-        if 'tenor' in cleflist:
+        if 'tenor' in identcleflist:
             worksheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='tenor'))
             keysheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='tenor'))
             for i in range(int(identnotesnumberVar.get())):
                 if len(tenorNotes) == 0:
-                    tenorNotes, tenorKey = identWriteNotesPopulateList(identwritenotesdata.tenorNotes, identwritenotesdata.tenorLedgerNotes, identwritenotesdata.tenorKey, identwritenotesdata.tenorLedgerKey)
+                    tenorNotes, tenorKey = identNotesPopulateList(identwritenotesdata.tenorNotes, identwritenotesdata.tenorLedgerNotes, identwritenotesdata.tenorKey, identwritenotesdata.tenorLedgerKey)
                 selection = random.choice(range(len(tenorNotes)))
                 note = tenorNotes.pop(selection)
                 key = tenorKey.pop(selection)
@@ -349,12 +353,12 @@ def identwritenotes(worksheetfile,keysheetfile,docfont,docboldfont):
             worksheetfile.writelines(identwritenotesdata.identSectionEnd)
             keysheetfile.writelines(identwritenotesdata.identSectionEnd)
         # BASS
-        if 'bass' in cleflist:
+        if 'bass' in identcleflist:
             worksheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='bass'))
             keysheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='bass'))
             for i in range(int(identnotesnumberVar.get())):
                 if len(bassNotes) == 0:
-                    bassNotes, bassKey = identWriteNotesPopulateList(identwritenotesdata.bassNotes, identwritenotesdata.bassLedgerNotes, identwritenotesdata.bassKey, identwritenotesdata.bassLedgerKey)
+                    bassNotes, bassKey = identNotesPopulateList(identwritenotesdata.bassNotes, identwritenotesdata.bassLedgerNotes, identwritenotesdata.bassKey, identwritenotesdata.bassLedgerKey)
                 selection = random.choice(range(len(bassNotes)))
                 note = bassNotes.pop(selection)
                 key = bassKey.pop(selection)
@@ -368,7 +372,62 @@ def identwritenotes(worksheetfile,keysheetfile,docfont,docboldfont):
     if writenotesVar.get() == 1:
         worksheetfile.writelines(identwritenotesdata.writeText.format(font=docfont))
         keysheetfile.writelines(identwritenotesdata.writeText.format(font=docfont))
-
+        # TREBLE
+        if 'treble' in writecleflist:
+            worksheetfile.writelines(identwritenotesdata.writeSectionStart.format(clef='treble'))
+            keysheetfile.writelines(identwritenotesdata.writeSectionStart.format(clef='treble'))
+            for i in range(int(writenotesnumberVar.get())):
+                if len(trebleNotes) == 0:
+                    trebleNotes, trebleKey = writeNotesPopulateList(identwritenotesdata.trebleNotes, identwritenotesdata.trebleKey)
+                selection = random.choice(range(len(trebleNotes)))
+                note = trebleNotes.pop(selection)
+                key = trebleKey.pop(selection)
+                worksheetfile.writelines(identwritenotesdata.writeLoop.format(note='s', key=key))
+                keysheetfile.writelines(identwritenotesdata.writeLoop.format(note="\override NoteHead.color = #red \override Stem.color = #red " + note, key=key))
+            worksheetfile.writelines(identwritenotesdata.writeSectionEnd)
+            keysheetfile.writelines(identwritenotesdata.writeSectionEnd)
+        # ALTO
+        if 'alto' in writecleflist:
+            worksheetfile.writelines(identwritenotesdata.writeSectionStart.format(clef='alto'))
+            keysheetfile.writelines(identwritenotesdata.writeSectionStart.format(clef='alto'))
+            for i in range(int(writenotesnumberVar.get())):
+                if len(altoNotes) == 0:
+                    altoNotes, altoKey = writeNotesPopulateList(identwritenotesdata.altoNotes, identwritenotesdata.altoKey)
+                selection = random.choice(range(len(altoNotes)))
+                note = altoNotes.pop(selection)
+                key = altoKey.pop(selection)
+                worksheetfile.writelines(identwritenotesdata.writeLoop.format(note='s', key=key))
+                keysheetfile.writelines(identwritenotesdata.writeLoop.format(note="\override NoteHead.color = #red \override Stem.color = #red " + note, key=key))
+            worksheetfile.writelines(identwritenotesdata.writeSectionEnd)
+            keysheetfile.writelines(identwritenotesdata.writeSectionEnd)
+        # TENOR
+        if 'tenor' in writecleflist:
+            worksheetfile.writelines(identwritenotesdata.writeSectionStart.format(clef='tenor'))
+            keysheetfile.writelines(identwritenotesdata.writeSectionStart.format(clef='tenor'))
+            for i in range(int(writenotesnumberVar.get())):
+                if len(tenorNotes) == 0:
+                    tenorNotes, tenorKey = writeNotesPopulateList(identwritenotesdata.tenorNotes, identwritenotesdata.tenorKey)
+                selection = random.choice(range(len(tenorNotes)))
+                note = tenorNotes.pop(selection)
+                key = tenorKey.pop(selection)
+                worksheetfile.writelines(identwritenotesdata.writeLoop.format(note='s', key=key))
+                keysheetfile.writelines(identwritenotesdata.writeLoop.format(note="\override NoteHead.color = #red \override Stem.color = #red " + note, key=key))
+            worksheetfile.writelines(identwritenotesdata.writeSectionEnd)
+            keysheetfile.writelines(identwritenotesdata.writeSectionEnd)
+        # BASS
+        if 'bass' in writecleflist:
+            worksheetfile.writelines(identwritenotesdata.writeSectionStart.format(clef='bass'))
+            keysheetfile.writelines(identwritenotesdata.writeSectionStart.format(clef='bass'))
+            for i in range(int(writenotesnumberVar.get())):
+                if len(bassNotes) == 0:
+                    bassNotes, bassKey = writeNotesPopulateList(identwritenotesdata.bassNotes, identwritenotesdata.bassKey)
+                selection = random.choice(range(len(bassNotes)))
+                note = bassNotes.pop(selection)
+                key = bassKey.pop(selection)
+                worksheetfile.writelines(identwritenotesdata.writeLoop.format(note='s', key=key))
+                keysheetfile.writelines(identwritenotesdata.writeLoop.format(note="\override NoteHead.color = #red \override Stem.color = #red " + note, key=key))
+            worksheetfile.writelines(identwritenotesdata.writeSectionEnd)
+            keysheetfile.writelines(identwritenotesdata.writeSectionEnd)
 
 
 
@@ -408,7 +467,7 @@ def enableidentnoteswidgets():
     enableWidgets(identnotesVar, [identnotestrebleCheckBox, identnotesbassCheckBox, identnotesaltoCheckBox, identnotestenorCheckBox, ledgerLinesCheckBox])
 
 def enablewritenoteswidgets():
-    enableWidgets(writenotesVar, [writenotestrebleCheckBox, writenotesbassCheckBox, writenotesaltoCheckBox, writenotestenorCheckBox, ledgerLinesCheckBox])
+    enableWidgets(writenotesVar, [writenotestrebleCheckBox, writenotesbassCheckBox, writenotesaltoCheckBox, writenotestenorCheckBox])
 
 
 def callLilypond(worksheet,key):

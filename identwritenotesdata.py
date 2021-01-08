@@ -6,19 +6,21 @@ header = """%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 identText = """\markup {{ {font} {{ Identify the following notes. }}}}
 """
+
 identSectionStart = """{{ \override TextScript.staff-padding = #6 \\notimesig \\nobarline \clef {clef} """
 
 identLoop = """{note}_\markup \center-align {{ {key} }} """
 
 identSectionEnd = """}"""
 
-
-
 writeText = """\markup {{ {font} {{ Write the following notes. }}}}
 """
-writeSectionStart = """{{ \clef {clef} """
-writeSectionEnd = """}}"""
 
+writeSectionStart = """{{ \override TextScript.staff-padding = #6 \\notimesig \\nobarline \clef {clef} """
+
+writeLoop = """{note}_\markup \center-align {{ {key} }} """
+
+writeSectionEnd = """}"""
 
 # notes and keys for each clef
 trebleNotes = ["d'", "e'", "f'", "g'", "a'", "b'", "c''", "d''", "e''", "f''", "g''"]
