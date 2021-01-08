@@ -16,6 +16,7 @@ import random
 import headers
 import auralintervalsdata
 import drawclefsdata
+import identwritenotesdata
 
 import footers
 
@@ -100,13 +101,13 @@ def savesettings():
 
 
 def createButton():
-    docfont,docboldfont = initcustomfonts()
-    worksheetfile,keysheetfile, worksheetfilename, keysheetfilename = start_ly_file(docfont,docboldfont)
-    auralintervals(worksheetfile,keysheetfile,docfont,docboldfont)
-    drawclefs(worksheetfile,keysheetfile,docfont,docboldfont)
-    identwritenotes(worksheetfile,keysheetfile,docfont,docboldfont)
-    endfile(worksheetfile,keysheetfile)
-    callLilypond(worksheetfilename,keysheetfilename)
+    docfont, docboldfont = initcustomfonts()
+    worksheetfile, keysheetfile, worksheetfilename, keysheetfilename = start_ly_file(docfont, docboldfont)
+    auralintervals(worksheetfile, keysheetfile, docfont, docboldfont)
+    drawclefs(worksheetfile, keysheetfile, docfont, docboldfont)
+    identwritenotes(worksheetfile, keysheetfile, docfont, docboldfont)
+    endfile(worksheetfile, keysheetfile)
+    callLilypond(worksheetfilename, keysheetfilename)
 
 #######################################################
 
@@ -197,7 +198,7 @@ def listifyClefs(treble, alto, tenor, bass):
     return cleflist
 
 
-def auralintervals(worksheetfile,keysheetfile,docfont,docboldfont):
+def auralintervals(worksheetfile, keysheetfile, docfont, docboldfont):
     if auralintervalsVar.get() == 1:
         # init variables
         intervals = []
@@ -249,7 +250,8 @@ def auralintervals(worksheetfile,keysheetfile,docfont,docboldfont):
         worksheetfile.writelines(auralintervalsdata.header.format(font=docfont, boldfont=docboldfont, masterloop=worksheetdata))
         keysheetfile.writelines(auralintervalsdata.header.format(font=docfont, boldfont=docboldfont, masterloop=keydata))
 
-def drawclefs(worksheetfile,keysheetfile,docfont,docboldfont):
+
+def drawclefs(worksheetfile, keysheetfile, docfont, docboldfont):
     if drawclefsVar.get() == 1:
         worksheetfile.writelines(drawclefsdata.header.format(font=docfont, boldfont=docboldfont, number=drawclefsnumberVar.get()))
         keysheetfile.writelines(drawclefsdata.header.format(font=docfont, boldfont=docboldfont, number=drawclefsnumberVar.get()))
@@ -278,18 +280,94 @@ def drawclefs(worksheetfile,keysheetfile,docfont,docboldfont):
             keysheetfile.writelines(drawclefsdata.clefone.format(clef=cleflist[2], key=''))
             keysheetfile.writelines(drawclefsdata.cleftwo.format(clef=cleflist[3], startstaff='\startStaff', key='', hideclef=''))
 
+def identWriteNotesPopulateList(notes, ledgernotes, key, ledgerkey):
+    if ledgerLinesVar.get() == 1:
+        noteslist = notes + ledgernotes
+        keylist = key + ledgerkey
+    else:
+        noteslist = notes.copy()
+        keylist = key.copy()
+    return noteslist, keylist
+
 
 def identwritenotes(worksheetfile,keysheetfile,docfont,docboldfont):
+    # headers
+    if identnotesVar.get() == 1 or writenotesVar.get() == 1:
+        worksheetfile.writelines(identwritenotesdata.header.format(boldfont=docboldfont))
+        keysheetfile.writelines(identwritenotesdata.header.format(boldfont=docboldfont))
+    # variables setup
+    cleflist = listifyClefs(identnotestrebleVar, identnotesaltoVar, identnotestenorVar, identnotesbassVar)
+    trebleNotes = []
+    altoNotes = []
+    tenorNotes = []
+    bassNotes = []
+
     # identify notes
     if identnotesVar.get() == 1:
-        print('identify notes on')
-        cleflist = listifyClefs(identnotestrebleVar,identnotesaltoVar,identnotestenorVar, identnotesbassVar)
-        print(cleflist)
+        worksheetfile.writelines(identwritenotesdata.identText.format(font=docfont))
+        keysheetfile.writelines(identwritenotesdata.identText.format(font=docfont))
+        # TREBLE
+        if 'treble' in cleflist:
+            worksheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='treble'))
+            keysheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='treble'))
+            for i in range(int(identnotesnumberVar.get())):
+                if len(trebleNotes) == 0:
+                    trebleNotes, trebleKey = identWriteNotesPopulateList(identwritenotesdata.trebleNotes, identwritenotesdata.trebleLedgerNotes, identwritenotesdata.trebleKey, identwritenotesdata.trebleLedgerKey)
+                selection = random.choice(range(len(trebleNotes)))
+                note = trebleNotes.pop(selection)
+                key = trebleKey.pop(selection)
+                worksheetfile.writelines(identwritenotesdata.identLoop.format(note=note, key='__'))
+                keysheetfile.writelines(identwritenotesdata.identLoop.format(note=note, key='\with-color #red ' + key))
+            worksheetfile.writelines(identwritenotesdata.identSectionEnd)
+            keysheetfile.writelines(identwritenotesdata.identSectionEnd)
+        # ALTO
+        if 'alto' in cleflist:
+            worksheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='alto'))
+            keysheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='alto'))
+            for i in range(int(identnotesnumberVar.get())):
+                if len(altoNotes) == 0:
+                    altoNotes, altoKey = identWriteNotesPopulateList(identwritenotesdata.altoNotes, identwritenotesdata.altoLedgerNotes, identwritenotesdata.altoKey, identwritenotesdata.altoLedgerKey)
+                selection = random.choice(range(len(altoNotes)))
+                note = altoNotes.pop(selection)
+                key = altoKey.pop(selection)
+                worksheetfile.writelines(identwritenotesdata.identLoop.format(note=note, key='__'))
+                keysheetfile.writelines(identwritenotesdata.identLoop.format(note=note, key='\with-color #red ' + key))
+            worksheetfile.writelines(identwritenotesdata.identSectionEnd)
+            keysheetfile.writelines(identwritenotesdata.identSectionEnd)
+        # TENOR
+        if 'tenor' in cleflist:
+            worksheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='tenor'))
+            keysheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='tenor'))
+            for i in range(int(identnotesnumberVar.get())):
+                if len(tenorNotes) == 0:
+                    tenorNotes, tenorKey = identWriteNotesPopulateList(identwritenotesdata.tenorNotes, identwritenotesdata.tenorLedgerNotes, identwritenotesdata.tenorKey, identwritenotesdata.tenorLedgerKey)
+                selection = random.choice(range(len(tenorNotes)))
+                note = tenorNotes.pop(selection)
+                key = tenorKey.pop(selection)
+                worksheetfile.writelines(identwritenotesdata.identLoop.format(note=note, key='__'))
+                keysheetfile.writelines(identwritenotesdata.identLoop.format(note=note, key='\with-color #red ' + key))
+            worksheetfile.writelines(identwritenotesdata.identSectionEnd)
+            keysheetfile.writelines(identwritenotesdata.identSectionEnd)
+        # BASS
+        if 'bass' in cleflist:
+            worksheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='bass'))
+            keysheetfile.writelines(identwritenotesdata.identSectionStart.format(clef='bass'))
+            for i in range(int(identnotesnumberVar.get())):
+                if len(bassNotes) == 0:
+                    bassNotes, bassKey = identWriteNotesPopulateList(identwritenotesdata.bassNotes, identwritenotesdata.bassLedgerNotes, identwritenotesdata.bassKey, identwritenotesdata.bassLedgerKey)
+                selection = random.choice(range(len(bassNotes)))
+                note = bassNotes.pop(selection)
+                key = bassKey.pop(selection)
+                worksheetfile.writelines(identwritenotesdata.identLoop.format(note=note, key='__'))
+                keysheetfile.writelines(identwritenotesdata.identLoop.format(note=note, key='\with-color #red ' + key))
+            worksheetfile.writelines(identwritenotesdata.identSectionEnd)
+            keysheetfile.writelines(identwritenotesdata.identSectionEnd)
+
+
     # write notes
     if writenotesVar.get() == 1:
-        print('write notes on')
-        cleflist = listifyClefs(writenotestrebleVar,writenotesaltoVar,writenotestenorVar,writenotesbassVar)
-        print(cleflist)
+        worksheetfile.writelines(identwritenotesdata.writeText.format(font=docfont))
+        keysheetfile.writelines(identwritenotesdata.writeText.format(font=docfont))
 
 
 
@@ -327,13 +405,15 @@ def enabledrawclefswidgets():
     enableWidgets(drawclefsVar, [drawcleftrebleCheckBox, drawclefbassCheckBox, drawclefaltoCheckBox, drawcleftenorCheckBox])
 
 def enableidentnoteswidgets():
-    enableWidgets(identnotesVar, [identnotestrebleCheckBox, identnotesbassCheckBox, identnotesaltoCheckBox, identnotestenorCheckBox, ledgerLinesCheckBox, ledgerlinepercentLabel, ledgerlinepercentBox])
+    enableWidgets(identnotesVar, [identnotestrebleCheckBox, identnotesbassCheckBox, identnotesaltoCheckBox, identnotestenorCheckBox, ledgerLinesCheckBox])
 
 def enablewritenoteswidgets():
-    enableWidgets(writenotesVar, [writenotestrebleCheckBox, writenotesbassCheckBox, writenotesaltoCheckBox, writenotestenorCheckBox, ledgerLinesCheckBox, ledgerlinepercentLabel, ledgerlinepercentBox])
+    enableWidgets(writenotesVar, [writenotestrebleCheckBox, writenotesbassCheckBox, writenotesaltoCheckBox, writenotestenorCheckBox, ledgerLinesCheckBox])
 
 
 def callLilypond(worksheet,key):
+    #pass
+    # I'm doing the call this way due to a lilypond bug in Gentoo in which it doesn't accept the -o argument
     system('cd ' + path.dirname(worksheet) + ' && lilypond ' + path.basename(worksheet))
     system('cd ' + path.dirname(key) + ' && lilypond ' + path.basename(key))
 
@@ -639,15 +719,6 @@ rowvar = rowvar + 1
 ledgerLinesVar = IntVar(value=0)
 ledgerLinesCheckBox = Checkbutton(identwritenotesframe, text = "Ledger Lines", variable = ledgerLinesVar, onvalue = 1, offvalue = 0, height=1,state=DISABLED)
 ledgerLinesCheckBox.grid(row=rowvar, column=0, sticky=W)
-
-# ledger line notes frequency
-ledgerlinepercentVar = StringVar()
-ledgerlinepercentVar.set("10")
-ledgerlinepercentBox = Spinbox(identwritenotesframe, from_=0, to=100, width=3, textvariable=ledgerlinepercentVar, state=DISABLED)
-ledgerlinepercentBox.grid(row=rowvar, column=1, sticky=W)
-# percent label
-ledgerlinepercentLabel = Label(identwritenotesframe, text="%", state=DISABLED)
-ledgerlinepercentLabel.grid(row=rowvar, column=1, padx=xpadding, pady=ypadding)
 rowvar = rowvar + 1
 
 
